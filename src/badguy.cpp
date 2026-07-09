@@ -28,6 +28,7 @@
 #include "badguy.h"
 #include "scene.h"
 #include "screen.h"
+#include "sound.h"
 #include "world.h"
 #include "tile.h"
 #include "resources.h"
@@ -545,6 +546,13 @@ BadGuy::action_stalactite(double frame_ratio)
     // near
     if(tux.base.x + 32 > base.x - RANGE && tux.base.x < base.x + 32 + RANGE
             && tux.base.y + tux.base.height > base.y) {
+      #ifndef NOSOUND
+      #ifndef GP2X
+        play_sound(sounds[SND_STALACTITE_CRACK], SOUND_CENTER_SPEAKER);
+      #else
+        play_chunk(SND_STALACTITE_CRACK);
+      #endif
+      #endif
       timer.start(SHAKETIME);
       mode = STALACTITE_SHAKING;
     }
@@ -562,6 +570,13 @@ BadGuy::action_stalactite(double frame_ratio)
       dying = DYING_SQUISHED;
       mode = FLAT;
       set_sprite(img_stalactite_broken, img_stalactite_broken);
+      #ifndef NOSOUND
+      #ifndef GP2X
+        play_sound(sounds[SND_STALACTITE_CRASH], SOUND_CENTER_SPEAKER);
+      #else
+        play_chunk(SND_STALACTITE_CRASH);
+      #endif
+      #endif
     }
   } else if(mode == FLAT) {
     fall();

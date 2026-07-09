@@ -51,7 +51,9 @@ const char * soundfilenames[NUM_SOUNDS] = {
                                        "/sounds/stomp.wav",
                                        "/sounds/kick.wav",
                                        "/sounds/explode.wav",
-                                       "/sounds/warp.wav"
+                                       "/sounds/warp.wav",
+                                       "/sounds/stalactite-crack.wav",
+                                       "/sounds/stalactite-crash.wav"
                                     };
 
 
