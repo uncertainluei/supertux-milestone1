@@ -36,7 +36,7 @@
 Sprite* img_bullet;
 Sprite* img_star;
 Sprite* img_growup;
-Sprite* img_iceflower;
+Sprite* img_fireflower;
 Sprite* img_1up;
 
 #define GROWUP_SPEED 1.0f
@@ -170,7 +170,7 @@ Upgrade::init(float x_, float y_, Direction dir_, UpgradeKind kind_)
     physic.set_velocity(dir == LEFT ? -1 : 1, 4);
     physic.enable_gravity(true);
     base.height = 32;
-  } else if (kind == UPGRADE_ICEFLOWER) {
+  } else if (kind == UPGRADE_FIREFLOWER) {
     // nothing
   } else if (kind == UPGRADE_GROWUP) {
     physic.set_velocity(dir == LEFT ? -GROWUP_SPEED : GROWUP_SPEED, 0);
@@ -197,7 +197,7 @@ Upgrade::remove_me()
 void
 Upgrade::action(double frame_ratio)
 {
-  if (kind == UPGRADE_ICEFLOWER || kind == UPGRADE_GROWUP) {
+  if (kind == UPGRADE_FIREFLOWER || kind == UPGRADE_GROWUP) {
     if (base.height < 32) {
       /* Rise up! */
       base.height = base.height + 0.7 * frame_ratio;
@@ -283,8 +283,8 @@ Upgrade::draw()
 
       if (kind == UPGRADE_GROWUP)
         img_growup->draw_part(0,0,dest.x,dest.y,dest.w,dest.h);
-      else if (kind == UPGRADE_ICEFLOWER)
-        img_iceflower->draw_part(0,0,dest.x,dest.y,dest.w,dest.h);
+      else if (kind == UPGRADE_FIREFLOWER)
+        img_fireflower->draw_part(0,0,dest.x,dest.y,dest.w,dest.h);
       else if (kind == UPGRADE_HERRING)
         img_star->draw_part(0,0,dest.x,dest.y,dest.w,dest.h);
       else if (kind == UPGRADE_1UP)
@@ -297,9 +297,9 @@ Upgrade::draw()
           img_growup->draw(
                        base.x - scroll_x, base.y);
         }
-      else if (kind == UPGRADE_ICEFLOWER)
+      else if (kind == UPGRADE_FIREFLOWER)
         {
-          img_iceflower->draw(
+          img_fireflower->draw(
                        base.x - scroll_x, base.y);
         }
       else if (kind == UPGRADE_HERRING)
@@ -368,7 +368,7 @@ Upgrade::collision(void* p_c_object, int c_object, CollisionType type)
 #endif
           pplayer->grow();
         }
-      else if (kind == UPGRADE_ICEFLOWER)
+      else if (kind == UPGRADE_FIREFLOWER)
         {
 #ifndef NOSOUND
 #ifndef GP2X
@@ -416,7 +416,7 @@ Upgrade::collision(void* p_c_object, int c_object, CollisionType type)
 void load_special_gfx()
 {
   img_growup    = sprite_manager->load("egg");
-  img_iceflower = sprite_manager->load("iceflower");
+  img_fireflower = sprite_manager->load("fireflower");
   img_star      = sprite_manager->load("star");
   img_1up       = sprite_manager->load("1up");
 

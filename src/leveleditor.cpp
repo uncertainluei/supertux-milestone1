@@ -1710,9 +1710,9 @@ void le_change(float x, float y, int tm, unsigned int c)
 
 void le_testlevel()
 {
-  //Make sure a time value is set when testing the level
-  if(le_world->get_level()->time_left == 0)
-    le_world->get_level()->time_left = 250;
+  // This is no longer necessary as 0 disables the timer
+  // if(le_world->get_level()->time_left == 0)
+  //   le_world->get_level()->time_left = 250;
 
   le_world->get_level()->save("test", le_level);
 

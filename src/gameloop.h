@@ -73,6 +73,7 @@ class GameSession
   float last_x_pos;
 
   bool game_pause;
+  bool has_timer;
 
   // FIXME: Hack for restarting the level
   std::string subset;

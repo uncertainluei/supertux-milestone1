@@ -67,6 +67,7 @@ GameSession::GameSession(const std::string& subset_, int levelnb_, int mode)
   
   global_frame_counter = 0;
   game_pause = false;
+  has_timer = false;
 
   fps_timer.init(true);            
   frame_timer.init(true);
@@ -142,6 +143,7 @@ GameSession::restart_level()
         levelintro();
     }
 
+  has_timer = false;
   time_left.init(true);
   start_timers();
 #ifndef NOSOUND
@@ -189,7 +191,12 @@ void
 GameSession::start_timers()
 {
   st_pause_ticks_init();
-  time_left.start(world->get_level()->time_left*1000);
+  has_timer = false;
+  if (world->get_level()->time_left > 0)
+  {
+    has_timer = true;
+    time_left.start(world->get_level()->time_left*1000);
+  }
   update_time = st_get_ticks();
 }
 
@@ -574,6 +581,7 @@ GameSession::check_end_conditions()
 #ifndef NOSOUND
       music_manager->play_music(level_end_song, 0);
 #endif
+      time_left.stop();
       endsequence_timer.start(7000);
       tux->invincible_timer.start(7000); //FIXME: Implement a winning timer for the end sequence (with special winning animation etc.)
     }
@@ -816,7 +824,7 @@ GameSession::run()
         }
 
       /* Handle time: */
-      if (!time_left.check() && world->get_tux()->dying == DYING_NOT
+      if (has_timer && !time_left.check() && world->get_tux()->dying == DYING_NOT
               && !end_sequence)
         world->get_tux()->kill(Player::KILL);
 
@@ -827,7 +835,7 @@ GameSession::run()
           world->play_music(HERRING_MUSIC);
         }
       /* are we low on time ? */
-      else if (time_left.get_left() < TIME_WARNING && !end_sequence)
+      else if (has_timer && time_left.get_left() < TIME_WARNING && !end_sequence)
         {
           world->play_music(HURRYUP_MUSIC);
         }
@@ -897,12 +905,15 @@ GameSession::drawstatus()
       white_text->draw("Press ESC To Return",0,20,1);
     }
 
-  if(!time_left.check()) {
-    white_text->draw("TIME'S UP", 224/xdiv, 0, 1);
-  } else if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) {
-    sprintf(str, "%d", time_left.get_left() / 1000 );
-    white_text->draw("TIME", 224/xdiv, 0, 1);
-    gold_text->draw(str, 304/xdiv, 0, 1);
+  if (has_timer)
+  {
+    if(!time_left.check()) {
+      white_text->draw("TIME'S UP", 224/xdiv, 0, 1);
+    } else if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) {
+      sprintf(str, "%d", time_left.get_left() / 1000 );
+      white_text->draw("TIME", 224/xdiv, 0, 1);
+      gold_text->draw(str, 304/xdiv, 0, 1);
+    }
   }
 
   sprintf(str, "%d", player_status.distros);
@@ -946,7 +957,7 @@ GameSession::drawendscreen()
   else
     drawgradient(get_level()->bkgd_top, get_level()->bkgd_bottom);
 
-  blue_text->drawf("GAMEOVER", 0, 200, A_HMIDDLE, A_TOP, 1);
+  blue_text->drawf("GAME OVER", 0, 200, A_HMIDDLE, A_TOP, 1);
 
   sprintf(str, "SCORE: %d", player_status.score);
   gold_text->drawf(str, 0, 224, A_HMIDDLE, A_TOP, 1);

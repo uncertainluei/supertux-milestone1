@@ -711,7 +711,7 @@ World::tryemptybox(float x, float y, Direction col_side)
       if (tux.size == SMALL)     /* Tux is small, add mints! */
         add_upgrade(posx, posy, col_side, UPGRADE_GROWUP);
       else     /* Tux is big, add an iceflower: */
-        add_upgrade(posx, posy, col_side, UPGRADE_ICEFLOWER);
+        add_upgrade(posx, posy, col_side, UPGRADE_FIREFLOWER);
 #ifndef NOSOUND
 #ifndef GP2X
       play_sound(sounds[SND_UPGRADE], SOUND_CENTER_SPEAKER);
