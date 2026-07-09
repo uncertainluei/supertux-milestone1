@@ -981,30 +981,15 @@ WorldMap::draw_status()
 
   char str[80];
   sprintf(str, "%d", player_status.score);
-  white_text->draw("SCORE", 0, 0);
-  gold_text->draw(str, (int)(96)/xdiv, 0);
+  gold_text->draw_align(str, screen->h+156/xdiv, 4, A_RIGHT, A_TOP);
 
   sprintf(str, "%d", player_status.distros);
-  white_text->draw_align("COINS", (int)(320-64)/xdiv, 0,  A_LEFT, A_TOP);
-  gold_text->draw_align(str, (int)(320+64)/xdiv, 0, A_RIGHT, A_TOP);
+  hud_coins->draw(8/xdiv, 4);
+  gold_text->draw(str, 40/xdiv, 4, 1);
 
-  white_text->draw("LIVES", (int)(480)/xdiv, 0);
-  if (player_status.lives >= 5)
-    {
-      sprintf(str, "%dx", player_status.lives);
-#ifdef RES320X240
-      gold_text->draw_align(str, (int)(617)/xdiv-5, 0, A_RIGHT, A_TOP);
-      tux_life->draw((int)((565-12+(18*3))), 0);
-#else
-      gold_text->draw_align(str, (int)(617), 0, A_RIGHT, A_TOP);
-      tux_life->draw((int)((565+(18*3))), 0);
-#endif
-    }
-  else
-    {
-      for(int i= 0; i < player_status.lives; ++i)
-        tux_life->draw((565+(18/xdiv*i)),0);
-    }
+  sprintf(str, "%d", player_status.lives);
+  tux_life->draw(8/xdiv, 24);
+  gold_text->draw_align(str, 40/xdiv, 24, A_LEFT, A_TOP);
 
   if (!tux->is_moving())
     {

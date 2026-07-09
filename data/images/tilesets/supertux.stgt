@@ -144,15 +144,15 @@
        (solid #t))
 
  (tile (id 44)
-       (images "coin1.png" "coin2.png" "coin3.png" "coin2.png")
+       (images "coin1.png" "coin2.png" "coin3.png" "coin4.png")
        (distro #t)
        (anim-speed 45))
  (tile (id 45)
-       (images "coin1.png" "coin2.png" "coin3.png" "coin2.png")
+       (images "coin1.png" "coin2.png" "coin3.png" "coin4.png")
        (distro #t)
        (anim-speed 45))
  (tile (id 46)
-       (images "coin1.png" "coin2.png" "coin3.png" "coin2.png")
+       (images "coin1.png" "coin2.png" "coin3.png" "coin4.png")
        (distro #t)
        (anim-speed 45))
 

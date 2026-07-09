@@ -166,7 +166,7 @@ void loadshared()
   /* Upgrades: */
   load_special_gfx();
 
-  /* Distros: */
+  /* Coins: */
   img_distro[0] = new Surface(datadir + "/images/tilesets/coin1.png",
                USE_ALPHA);
 
@@ -176,13 +176,17 @@ void loadshared()
   img_distro[2] = new Surface(datadir + "/images/tilesets/coin3.png",
                USE_ALPHA);
 
-  img_distro[3] = new Surface(datadir + "/images/tilesets/coin2.png",
+  img_distro[3] = new Surface(datadir + "/images/tilesets/coin4.png",
                USE_ALPHA);
 
 
-  /* Tux life: */
+  /* Hud sprites: */
 
-  tux_life = new Surface(datadir + "/images/shared/tux-life.png",
+  tux_life = new Surface(datadir + "/images/shared/hud/lives.png",
+                         USE_ALPHA);
+  hud_coins = new Surface(datadir + "/images/shared/hud/coins.png",
+                         USE_ALPHA);
+  hud_time = new Surface(datadir + "/images/shared/hud/time.png",
                          USE_ALPHA);
 
   /* Sound effects: */

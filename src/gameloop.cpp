@@ -19,6 +19,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+#include "text.h"
 #include <iostream>
 #include <assert.h>
 #include <stdio.h>
@@ -164,24 +165,34 @@ GameSession::levelintro(void)
 #endif
   
   char str[60];
- 
   if (get_level()->img_bkgd)
     get_level()->img_bkgd->draw(0, 0);
   else
     drawgradient(get_level()->bkgd_top, get_level()->bkgd_bottom);
 
-  sprintf(str, "%s", world->get_level()->name.c_str());
-  gold_text->drawf(str, 0, 200, A_HMIDDLE, A_TOP, 1);
+  switch (player_status.bonus)
+  {
+  case PlayerStatus::GROWUP_BONUS:
+    largetux.stand_right->draw(screen->h/2+24, 224);
+    break;
+  case PlayerStatus::FLOWER_BONUS:
+    firetux.stand_right->draw(screen->h/2+24, 224);
+    break;
+  default:
+    smalltux.stand_right->draw(screen->h/2+24, 240);
+    break;
+  }
 
-  sprintf(str, "TUX x %d", player_status.lives);
-  white_text->drawf(str, 0, 224, A_HMIDDLE, A_TOP, 1);
+  sprintf(str, "x %d", player_status.lives);
+  white_text->drawf(str, screen->h/2+72, 250, A_LEFT, A_TOP, 1);
+
+  sprintf(str, "%s", world->get_level()->name.c_str());
+  gold_text->drawf(str, 0, 180, A_HMIDDLE, A_TOP, 1);
   
   sprintf(str, "by %s", world->get_level()->author.c_str());
-  white_small_text->drawf(str, 0, 360, A_HMIDDLE, A_TOP, 1);
-  
+  white_small_text->drawf(str, 0, 200, A_HMIDDLE, A_TOP, 1);
 
   flipscreen();
-
   SDL_Event event;
   wait_for_event(event,1000,3000,true);
 }
@@ -608,7 +619,7 @@ GameSession::check_end_conditions()
     {
       player_status.bonus = PlayerStatus::NO_BONUS;
 
-      if (player_status.lives < 0)
+      if (player_status.lives <= 0)
         { // No more lives!?
           if(st_gl_mode != ST_GL_TEST)
             drawendscreen();
@@ -897,46 +908,36 @@ GameSession::drawstatus()
   char str[60];
 
   sprintf(str, "%d", player_status.score);
-  white_text->draw("SCORE", 0, 0, 1);
-  gold_text->draw(str, 96/xdiv, 0, 1);
+  //white_text->draw("SCORE", 0, 0, 1);
+  gold_text->draw_align(str, screen->h+156/xdiv, 4, A_RIGHT, A_TOP);
+
 
   if(st_gl_mode == ST_GL_TEST)
     {
-      white_text->draw("Press ESC To Return",0,20,1);
+      white_text->draw("Press ESC to Return", 80/xdiv,4,1);
     }
 
   if (has_timer)
   {
-    if(!time_left.check()) {
-      white_text->draw("TIME'S UP", 224/xdiv, 0, 1);
-    } else if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) {
-      sprintf(str, "%d", time_left.get_left() / 1000 );
-      white_text->draw("TIME", 224/xdiv, 0, 1);
-      gold_text->draw(str, 304/xdiv, 0, 1);
-    }
+    sprintf(str, "%d", time_left.get_left() / 1000);
+    hud_time->draw(screen->h+64/xdiv, 24);
+    gold_text->draw_align(str, screen->h+128/xdiv, 24, A_HMIDDLE, A_TOP);
+    //gold_text->draw(str, screen->h+96/xdiv, 24, 1);
+    // if(!time_left.check()) {
+    //   white_text->draw("TIME'S UP", 224/xdiv, 0, 1);
+    // } else if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) {
+    //   sprintf(str, "%d", time_left.get_left() / 1000 );
+    //   //white_text->draw("TIME", 224/xdiv, 0, 1);
+    // }
   }
 
   sprintf(str, "%d", player_status.distros);
-  white_text->draw("COINS", screen->h, 0, 1);
-  gold_text->draw(str, 608/xdiv, 0, 1);
+  hud_coins->draw(8/xdiv, 4);
+  gold_text->draw(str, 40/xdiv, 4, 1);
 
-  white_text->draw("LIVES", 480/xdiv, 20);
-  if (player_status.lives >= 5)
-    {
-      sprintf(str, "%dx", player_status.lives);
-#ifdef RES320X240
-      gold_text->draw_align(str, 617/xdiv-5, 20, A_RIGHT, A_TOP);
-      tux_life->draw(565+(18*3)/xdiv+10, 20);
-#else
-      gold_text->draw_align(str, 617, 20, A_RIGHT, A_TOP);
-      tux_life->draw(565+(18*3), 20);
-#endif
-    }
-  else
-    {
-      for(int i= 0; i < player_status.lives; ++i)
-        tux_life->draw(565+(18*i)/xdiv,20);
-    }
+  sprintf(str, "%d", player_status.lives);
+  tux_life->draw(8/xdiv, 24);
+  gold_text->draw_align(str, 40/xdiv, 24, A_LEFT, A_TOP);
 
   if(show_fps)
     {

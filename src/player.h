@@ -81,6 +81,8 @@ class Sprite;
 class BadGuy;
 
 extern Surface* tux_life;
+extern Surface* hud_coins;
+extern Surface* hud_time;
 
 extern Sprite* smalltux_gameover;
 extern Sprite* smalltux_star;
@@ -125,6 +127,7 @@ public:
 
   bool jumping;
   bool can_jump;
+  bool pit_failsafe;
   int frame_;
   int frame_main;
 
