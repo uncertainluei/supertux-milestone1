@@ -1028,7 +1028,10 @@ BadGuy::kill_me(int score)
     return;
   }
   if(kind == BAD_MRICEBLOCK) {
-    set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+    if (stay_on_platform)
+      set_sprite(img_smartblock_flat_left, img_smartblock_flat_right);
+    else
+      set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
     if(mode == HELD) {
       mode = NORMAL;
       Player& tux = *World::current()->get_tux();  
