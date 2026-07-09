@@ -110,7 +110,7 @@ public:
   void draw();
   std::string type() { return "BadGuy"; };
 
-  void explode(BadGuy* badguy);
+  void explode(BadGuy* badguy, bool instant);
 
   void collision(void* p_c_object, int c_object,
                  CollisionType type = COLLISION_NORMAL);
@@ -139,6 +139,9 @@ private:
   void action_flyingsnowball(double frame_ratio);
   void action_spiky(double frame_ratio);
   void action_snowball(double frame_ratio);
+
+  // Exploding action
+  void explode_bomb();
 
   /** handles falling down. disables gravity calculation when we're back on
    * ground */

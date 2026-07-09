@@ -201,7 +201,7 @@ void loadshared()
 #endif
 
   /* Herring song */
-  herring_song = music_manager->load_music(datadir + "/music/salcon.mod");
+  herring_song = music_manager->load_music(datadir + "/music/invincible.ogg");
   level_end_song = music_manager->load_music(datadir + "/music/leveldone.mod");
 #endif
 }

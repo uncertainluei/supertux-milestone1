@@ -451,7 +451,6 @@ void
 BadGuy::action_bomb(double frame_ratio)
 {
   static const int TICKINGTIME = 1000;
-  static const int EXPLODETIME = 1000;
     
   fall();
 
@@ -460,7 +459,24 @@ BadGuy::action_bomb(double frame_ratio)
     timer.start(TICKINGTIME);
   } else if(!timer.check()) {
     if(mode == BOMB_TICKING) {
-      mode = BOMB_EXPLODE;
+      explode_bomb();
+    } else if(mode == BOMB_EXPLODE) {
+      remove_me();
+      return;
+    }
+  }
+
+  // move
+  physic.apply(frame_ratio, base.x, base.y);                 
+  collision_swept_object_map(&old_base,&base);
+}
+
+void
+BadGuy::explode_bomb()
+{
+  static const int EXPLODETIME = 1000;
+
+  mode = BOMB_EXPLODE;
       set_sprite(img_mrbomb_explosion, img_mrbomb_explosion);
       dying = DYING_NOT; // now the bomb hurts
       timer.start(EXPLODETIME);
@@ -481,16 +497,6 @@ BadGuy::action_bomb(double frame_ratio)
 #endif
 #endif
       }
-
-    } else if(mode == BOMB_EXPLODE) {
-      remove_me();
-      return;
-    }
-  }
-
-  // move
-  physic.apply(frame_ratio, base.x, base.y);                 
-  collision_swept_object_map(&old_base,&base);
 }
 
 void
@@ -962,10 +968,16 @@ BadGuy::squish(Player* player)
 void
 BadGuy::kill_me(int score)
 {
-  if(kind == BAD_BOMB || kind == BAD_STALACTITE || kind == BAD_FLAME)
+  if(removable || kind == BAD_BOMB || kind == BAD_STALACTITE || kind == BAD_FLAME)
     return;
 
   dying = DYING_FALLING;
+  if (kind == BAD_MRBOMB)
+  {
+    // mrbomb explodes, giving no points
+    explode(this, true);
+    return;
+  }
   if(kind == BAD_MRICEBLOCK) {
     set_sprite(img_mriceblock_falling_left, img_mriceblock_falling_right);
     if(mode == HELD) {
@@ -978,6 +990,7 @@ BadGuy::kill_me(int score)
   physic.enable_gravity(true);
 
   /* Gain some points: */
+  if (score > 0)
     World::current()->add_score(base.x - scroll_x, base.y,
                     score * player_status.score_multiplier);
 
@@ -991,10 +1004,12 @@ BadGuy::kill_me(int score)
 #endif
 }
 
-void BadGuy::explode(BadGuy *badguy)
+void BadGuy::explode(BadGuy *badguy, bool instant)
 {
-World::current()->add_bad_guy(badguy->base.x, badguy->base.y, BAD_BOMB);
-badguy->remove_me();
+  BadGuy* bomb = World::current()->add_bad_guy(badguy->base.x, badguy->base.y, BAD_BOMB);
+  badguy->remove_me();
+  if (instant)
+    bomb->explode_bomb();
 }
 
 void
@@ -1017,7 +1032,7 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
   switch (c_object)
     {
     case CO_BULLET:
-      kill_me(10);
+        kill_me(10);
       break;
 
     case CO_BADGUY:
@@ -1027,6 +1042,7 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
       if(kind == BAD_MRICEBLOCK && mode == KICK)
         {
           pbad_c->kill_me(25);
+          break;
         }
 
       // a held mriceblock gets kills the enemy too but falls to ground then
@@ -1039,29 +1055,13 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
       /* Kill badguys that run into exploding bomb */
       else if (kind == BAD_BOMB && dying == DYING_NOT)
       {
-        if (pbad_c->kind == BAD_MRBOMB)
-        {
-          // mrbomb transforms into a bomb now
-          explode(pbad_c);
-          return;
-        }
-        else if (pbad_c->kind != BAD_MRBOMB)
-        {
-          pbad_c->kill_me(50);
-        }
+        pbad_c->kill_me(50);
       }
 
       /* Kill any badguys that get hit by stalactite */
       else if (kind == BAD_STALACTITE && dying == DYING_NOT)
       {
-        if (pbad_c->kind == BAD_MRBOMB)
-        {
-          // mrbomb transforms into a bomb now
-          explode(pbad_c);
-          return;
-        }
-        else
-          pbad_c->kill_me(50);
+        pbad_c->kill_me(50);
       }
 
       /* When enemies run into eachother, make them change directions */
