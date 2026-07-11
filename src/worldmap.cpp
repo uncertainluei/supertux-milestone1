@@ -981,7 +981,7 @@ WorldMap::draw_status()
 
   char str[80];
   sprintf(str, "%d", player_status.score);
-  gold_text->draw_align(str, screen->h+156/xdiv, 4, A_RIGHT, A_TOP);
+  gold_text->draw_align(str, screen->w-8/xdiv, 4, A_RIGHT, A_TOP);
 
   sprintf(str, "%d", player_status.distros);
   hud_coins->draw(8/xdiv, 4);

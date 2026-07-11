@@ -740,6 +740,14 @@ BadGuy::action_snowball(double frame_ratio)
   physic.apply(frame_ratio, base.x, base.y);
   if (dying != DYING_FALLING)
     collision_swept_object_map(&old_base,&base);
+
+  // Handle dying timer:
+  if (dying == DYING_SQUISHED && !timer.check())
+    {
+      /* Remove it if time's up: */
+      remove_me();
+      return;
+    }
 }
 
 void

@@ -942,31 +942,34 @@ void le_drawlevel()
   for (y = 0; y < 15; ++y)
     for (x = 0; x < 20; ++x)
     {
+      int relative_x = x+pos_x/32;
+      if (relative_x >= le_world->get_level()->width) // Do not draw out of bounds
+        continue;
 
       if(active_tm == TM_BG)
         a = 255;
       else
         a = 128;
 
-      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->bg_tiles[y][x + (int)(pos_x / 32)],a);
+      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->bg_tiles[y][relative_x],a);
 
       if(active_tm == TM_IA)
         a = 255;
       else
         a = 128;
 
-      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->ia_tiles[y][x + (int)(pos_x / 32)],a);
+      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->ia_tiles[y][relative_x],a);
 
       if(active_tm == TM_FG)
         a = 255;
       else
         a = 128;
 
-      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->fg_tiles[y][x + (int)(pos_x / 32)],a);
+      Tile::draw(32*x - fmodf(pos_x, 32), y * 32, le_world->get_level()->fg_tiles[y][relative_x],a);
 
       /* draw whats inside stuff when cursor is selecting those */
       /* (draw them all the time - is this the right behaviour?) */
-      Tile* edit_image = TileManager::instance()->get(le_world->get_level()->ia_tiles[y][x + (int)(pos_x / 32)]);
+      Tile* edit_image = TileManager::instance()->get(le_world->get_level()->ia_tiles[y][relative_x]);
       if(edit_image && !edit_image->editor_images.empty())
         edit_image->editor_images[0]->draw( x * 32 - ((int)pos_x % 32), y*32);
 
