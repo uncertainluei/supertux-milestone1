@@ -162,6 +162,9 @@ private:
   void squish_me(Player* player);
   /** set image of the badguy */
   void set_sprite(Sprite* left, Sprite* right);
+
+  // Set sprite of Mr. Iceblock depending on state
+  void set_sprite_mriceblock(bool flat);
 };
 
 struct BadGuyData

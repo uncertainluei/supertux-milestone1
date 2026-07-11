@@ -180,10 +180,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       break;
     case BAD_MRICEBLOCK:
       physic.set_velocity(-BADGUY_WALK_SPEED, 0);
-      if (stay_on_platform)
-        set_sprite(img_smartblock_left, img_smartblock_right);
-      else
-        set_sprite(img_mriceblock_left, img_mriceblock_right);
+      set_sprite_mriceblock(false);
       break;
     case BAD_MRBOMB:
       physic.set_velocity(-BADGUY_WALK_SPEED, 0);
@@ -279,7 +276,7 @@ BadGuy::action_mriceblock(double frame_ratio)
 
           mode=KICK;
           tux.kick_timer.start(KICKING_TIME);
-          set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+          set_sprite_mriceblock(true);
           physic.set_velocity_x((dir == LEFT) ? -3.5 : 3.5);
 #ifndef NOSOUND
 #ifndef GP2X
@@ -319,10 +316,7 @@ BadGuy::action_mriceblock(double frame_ratio)
       if(!timer.check())
         {
           mode = NORMAL;
-          if (stay_on_platform)
-            set_sprite(img_smartblock_left, img_smartblock_right);
-          else
-            set_sprite(img_mriceblock_left, img_mriceblock_right);
+          set_sprite_mriceblock(false);
           physic.set_velocity( (dir == LEFT) ? -.8 : .8, 0);
         }
     }
@@ -887,6 +881,23 @@ BadGuy::set_sprite(Sprite* left, Sprite* right)
 }
 
 void
+BadGuy::set_sprite_mriceblock(bool flat)
+{
+  if (flat)
+  {
+    if (stay_on_platform)
+      set_sprite(img_smartblock_flat_left, img_smartblock_flat_right);
+    else
+      set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+    return;
+  }
+  if (stay_on_platform)
+    set_sprite(img_smartblock_left, img_smartblock_right);
+  else
+    set_sprite(img_mriceblock_left, img_mriceblock_right);
+}
+
+void
 BadGuy::bump()
 {
   // these can't be bumped
@@ -953,10 +964,7 @@ BadGuy::squish(Player* player)
 #endif
 #endif
         mode = FLAT;
-        if (stay_on_platform)
-          set_sprite(img_smartblock_flat_left, img_smartblock_flat_right);
-        else
-          set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+        set_sprite_mriceblock(true);
         physic.set_velocity_x(0);
 
         timer.start(4000);
@@ -980,10 +988,7 @@ BadGuy::squish(Player* player)
 
         mode = KICK;
         player->kick_timer.start(KICKING_TIME);
-        if (stay_on_platform)
-          set_sprite(img_smartblock_flat_left, img_smartblock_flat_right);
-        else
-          set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+        set_sprite_mriceblock(true);
       }
 
     player->jump_of_badguy(this);
@@ -1043,10 +1048,7 @@ BadGuy::kill_me(int score)
     return;
   }
   if(kind == BAD_MRICEBLOCK) {
-    if (stay_on_platform)
-      set_sprite(img_smartblock_flat_left, img_smartblock_flat_right);
-    else
-      set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+    set_sprite_mriceblock(true);
     if(mode == HELD) {
       mode = NORMAL;
       Player& tux = *World::current()->get_tux();  
@@ -1204,7 +1206,7 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
 
         mode = KICK;
         player->kick_timer.start(KICKING_TIME);
-        set_sprite(img_mriceblock_flat_left, img_mriceblock_flat_right);
+        set_sprite_mriceblock(true);
       }
       break;
 
