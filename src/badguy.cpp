@@ -532,7 +532,6 @@ BadGuy::action_stalactite(double frame_ratio)
 {
   Player& tux = *World::current()->get_tux();
 
-  static const int SHAKETIME = 800;
   static const int RANGE = 40;
     
   if(mode == NORMAL) {
@@ -540,15 +539,7 @@ BadGuy::action_stalactite(double frame_ratio)
     // near
     if(tux.base.x + 32 > base.x - RANGE && tux.base.x < base.x + 32 + RANGE
             && tux.base.y + tux.base.height > base.y) {
-      #ifndef NOSOUND
-      #ifndef GP2X
-        play_sound(sounds[SND_STALACTITE_CRACK], SOUND_CENTER_SPEAKER);
-      #else
-        play_chunk(SND_STALACTITE_CRACK);
-      #endif
-      #endif
-      timer.start(SHAKETIME);
-      mode = STALACTITE_SHAKING;
+      crack_stalactite();
     }
   } if(mode == STALACTITE_SHAKING) {
     base.x = old_base.x + (rand() % 6) - 3; // TODO this could be done nicer...
@@ -581,6 +572,22 @@ BadGuy::action_stalactite(double frame_ratio)
 
   if(dying == DYING_SQUISHED && !timer.check())
     remove_me();
+}
+
+void
+BadGuy::crack_stalactite()
+{
+  static const int SHAKETIME = 800;
+
+  #ifndef NOSOUND
+  #ifndef GP2X
+    play_sound(sounds[SND_STALACTITE_CRACK], SOUND_CENTER_SPEAKER);
+  #else
+    play_chunk(SND_STALACTITE_CRACK);
+  #endif
+  #endif
+  timer.start(SHAKETIME);
+  mode = STALACTITE_SHAKING;
 }
 
 void
@@ -1109,24 +1116,26 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
   switch (c_object)
     {
     case CO_BULLET:
+        if (kind == BAD_STALACTITE && mode == NORMAL)
+        {
+          crack_stalactite();
+          return;
+        }
         kill_me(10);
       break;
 
     case CO_BADGUY:
       pbad_c = (BadGuy*) p_c_object;
 
-      /* If we're a kicked mriceblock, kill any badguys we hit */
-      if(kind == BAD_MRICEBLOCK && mode == KICK)
+      /* If we're a kicked/held mriceblock, kill any badguys we hit */
+      if (kind == BAD_MRICEBLOCK && mode > FLAT)
         {
           pbad_c->kill_me(25);
-          break;
-        }
 
-      // a held mriceblock gets kills the enemy too but falls to ground then
-      else if(kind == BAD_MRICEBLOCK && mode == HELD)
-        {
-          pbad_c->kill_me(25);
-          kill_me(0);
+          // a held mriceblock gets kills the enemy too but falls to ground then
+          if (mode == HELD) 
+            kill_me(0);
+          break;
         }
 
       /* Kill badguys that run into exploding bomb */

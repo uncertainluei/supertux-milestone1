@@ -140,8 +140,8 @@ private:
   void action_spiky(double frame_ratio);
   void action_snowball(double frame_ratio);
 
-  // Exploding action
-  void explode_bomb();
+  void explode_bomb(); // Exploding action
+  void crack_stalactite(); // Put stalactite into cracking mode
 
   /** handles falling down. disables gravity calculation when we're back on
    * ground */
