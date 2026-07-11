@@ -41,6 +41,7 @@ enum BadGuyKind {
   BAD_STALACTITE,
   BAD_FLAME,
   BAD_FISH,
+  BAD_LAVABALL,
   BAD_BOUNCINGSNOWBALL,
   BAD_FLYINGSNOWBALL,
   BAD_SPIKY,
@@ -89,6 +90,9 @@ public:
       direction, if false the enemy will jump or walk of the edge */
   bool stay_on_platform;
 
+  // Disable collisions with other gameobjects without declaring itself dead
+  bool disable_collision;
+
   Direction dir;
 
 private:
@@ -102,6 +106,12 @@ private:
   Sprite*   sprite_right;
 
   int animation_offset;
+
+  // Bad guy properties (this is both for readability and organization sake)
+  bool burnable;
+  bool bumpable;
+  bool invulnerable;
+  bool turn_when_bumped;
 
 public:
   BadGuy(float x, float y, BadGuyKind kind, bool stay_on_platform);
@@ -135,6 +145,7 @@ private:
   void action_stalactite(double frame_ratio);
   void action_flame(double frame_ratio);
   void action_fish(double frame_ratio);
+  void action_lavaball(double frame_ratio);
   void action_bouncingsnowball(double frame_ratio);
   void action_flyingsnowball(double frame_ratio);
   void action_spiky(double frame_ratio);

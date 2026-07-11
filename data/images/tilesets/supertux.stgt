@@ -11,7 +11,7 @@
  (tilegroup (name "Background") (tiles 24 25 63 70 71 72 73 74 106 107 108 109 110 111))
  (tilegroup (name "Classic-Bg") (tiles 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101))
  (tilegroup (name "Points") (tiles 132 133))
- (tilegroup (name "Bonus") (tiles 44 83 84 102 103 104 105 112 128))
+ (tilegroup (name "Bonus") (tiles 44 77 78 83 84 102 103 104 105 112 128))
  (tilegroup (name "Misc") (tiles 75 76 200 201 79 80 126 127 129 130 134 135 136 137 138 139 81 173 174))
  (tilegroup (name "Pipe") (tiles 53 54 55 56 57 58 59 60))
  (tilegroup (name "Grey") (tiles 64 65 66 67 68 69))
@@ -336,6 +336,7 @@
  ;; Brick with bonus content
  (tile (id 104)
        (images "brick0.png")
+       (editor-images "brick0-coin.png")
        (brick #t)    
        (data 1)
        (next-tile 84)
@@ -344,6 +345,7 @@
  ;; Brick with bonus content
  (tile (id 105)
        (images "brick1.png")
+       (editor-images "brick1-coin.png")
        (brick #t)
        (data 1)
        (next-tile 84)

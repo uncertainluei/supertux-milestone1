@@ -447,7 +447,7 @@ World::collision_handler()
       ++j;
       for (; j != bad_guys.end(); ++j)
         {
-          if(j == i || (*j)->dying != DYING_NOT)
+          if(j == i || (*j)->dying != DYING_NOT || (*j)->disable_collision)
             continue;
 
           if(rectcollision((*i)->base, (*j)->base))
@@ -690,7 +690,7 @@ World::tryemptybox(float x, float y, Direction col_side)
   else
     col_side = LEFT;
 
-  int posx = ((int)(x+1) / 32) * 32;
+  int posx = ((int)(x) / 32) * 32;
   int posy = (int)(y/32) * 32 - 32;
   switch(tile->data)
     {

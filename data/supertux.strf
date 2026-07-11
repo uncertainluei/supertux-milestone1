@@ -446,12 +446,29 @@
  (sprite (name "fish")
          (x-hotspot 2)
          (y-hotspot 3)
-         (images "shared/badguys/fish/left-0.png"
-                 "shared/badguys/fish/left-1.png"))
+         (images "shared/badguys/fish/up-0.png"
+                 "shared/badguys/fish/up-1.png"))
  (sprite (name "fish-down")
          (x-hotspot 2)
          (y-hotspot 11)
          (images "shared/badguys/fish/down-0.png"))
+
+ (sprite (name "lavaball")
+         (fps 15.0)
+         (x-hotspot 2)
+         (y-hotspot 3)
+         (images "shared/badguys/lavaball/up-0.png"
+                 "shared/badguys/lavaball/up-1.png"
+                 "shared/badguys/lavaball/up-2.png"
+                 "shared/badguys/lavaball/up-1.png"))
+ (sprite (name "lavaball-down")
+         (fps 15.0)
+         (x-hotspot 2)
+         (y-hotspot 11)
+         (images "shared/badguys/lavaball/down-0.png"
+                 "shared/badguys/lavaball/down-1.png"
+                 "shared/badguys/lavaball/down-2.png"
+                 "shared/badguys/lavaball/down-1.png"))
 
  (sprite (name "bouncingsnowball-left")
          (x-hotspot 1)

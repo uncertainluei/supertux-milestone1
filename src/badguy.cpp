@@ -20,12 +20,16 @@
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //  02111-1307, USA.
 
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <math.h>
 
+#include "collision.h"
 #include "globals.h"
 #include "defines.h"
 #include "badguy.h"
+#include "level.h"
 #include "scene.h"
 #include "screen.h"
 #include "sound.h"
@@ -49,16 +53,24 @@ Sprite* img_jumpy_left_middle;
 Sprite* img_jumpy_right_up;
 Sprite* img_jumpy_right_down;
 Sprite* img_jumpy_right_middle;
+
 Sprite* img_mrbomb_left;
 Sprite* img_mrbomb_right;
 Sprite* img_mrbomb_ticking_left;
 Sprite* img_mrbomb_ticking_right;
 Sprite* img_mrbomb_explosion;
+
 Sprite* img_stalactite;
 Sprite* img_stalactite_broken;
+
 Sprite* img_flame;
+
 Sprite* img_fish;
 Sprite* img_fish_down;
+
+Sprite* img_lavaball;
+Sprite* img_lavaball_down;
+
 Sprite* img_bouncingsnowball_left;
 Sprite* img_bouncingsnowball_right;
 Sprite* img_bouncingsnowball_squished_left;
@@ -84,29 +96,29 @@ BadGuyKind  badguykind_from_string(const std::string& str)
 {
   if (str == "money" || str == "jumpy") // was money in old maps
     return BAD_JUMPY;
-  else if (str == "laptop" || str == "mriceblock") // was laptop in old maps
+  if (str == "laptop" || str == "mriceblock") // was laptop in old maps
     return BAD_MRICEBLOCK;
-  else if (str == "mrbomb")
+  if (str == "mrbomb")
     return BAD_MRBOMB;
-  else if (str == "stalactite")
+  if (str == "stalactite")
     return BAD_STALACTITE;
-  else if (str == "flame")
+  if (str == "flame")
     return BAD_FLAME;
-  else if (str == "fish")
+  if (str == "fish")
     return BAD_FISH;
-  else if (str == "bouncingsnowball")
+  if (str == "lavaball")
+    return BAD_LAVABALL;
+  if (str == "bouncingsnowball")
     return BAD_BOUNCINGSNOWBALL;
-  else if (str == "flyingsnowball")
+  if (str == "flyingsnowball")
     return BAD_FLYINGSNOWBALL;
-  else if (str == "spiky")
+  if (str == "spiky")
     return BAD_SPIKY;
-  else if (str == "snowball" || str == "bsod") // was bsod in old maps
+  if (str == "snowball" || str == "bsod") // was bsod in old maps
     return BAD_SNOWBALL;
-  else
-    {
-      printf("Couldn't convert badguy: '%s'\n", str.c_str());
-      return BAD_SNOWBALL;
-    }
+  
+  printf("Couldn't convert badguy: '%s'\n", str.c_str());
+  return BAD_SNOWBALL;
 }
 
 std::string badguykind_to_string(BadGuyKind kind)
@@ -115,34 +127,26 @@ std::string badguykind_to_string(BadGuyKind kind)
     {
     case BAD_JUMPY:
       return "jumpy";
-      break;
     case BAD_MRICEBLOCK:
       return "mriceblock";
-      break;
     case BAD_MRBOMB:
       return "mrbomb";
-      break;
     case BAD_STALACTITE:
       return "stalactite";
-      break;
     case BAD_FLAME:
       return "flame";
-      break;
     case BAD_FISH:
       return "fish";
-      break;
+    case BAD_LAVABALL:
+      return "lavaball";
     case BAD_BOUNCINGSNOWBALL:
       return "bouncingsnowball";
-      break;
     case BAD_FLYINGSNOWBALL:
       return "flyingsnowball";
-      break;
     case BAD_SPIKY:
       return "spiky";
-      break;
     case BAD_SNOWBALL:
       return "snowball";
-      break;
     default:
       return "snowball";
     }
@@ -165,10 +169,18 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
   old_base = base;
   dir      = LEFT;
   seen     = false;
+  disable_collision = false;
+
   animation_offset = 0;
   sprite_left = sprite_right = 0;
   physic.reset();
   timer.init(true);
+
+  // default properties
+  burnable = true;
+  bumpable = true;
+  invulnerable = false;
+  turn_when_bumped = true;
 
   switch (kind) {
     case BAD_SNOWBALL:
@@ -187,11 +199,11 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       set_sprite(img_mrbomb_left, img_mrbomb_right);
       break;
     case BAD_BOMB:
+      disable_collision = true;
       set_sprite(img_mrbomb_ticking_left, img_mrbomb_ticking_right);
-      // hack so that the bomb doesn't hurt until it expldes...
-      dying = DYING_SQUISHED;
       break;
     case BAD_JUMPY:
+      turn_when_bumped = false;
       set_sprite(img_jumpy_left_up, img_jumpy_right_up);
       break;
     case BAD_BOUNCINGSNOWBALL:
@@ -199,10 +211,14 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       set_sprite(img_bouncingsnowball_left, img_bouncingsnowball_right);
       break;
     case BAD_STALACTITE:
+      bumpable = false;
+      invulnerable = true;
+      turn_when_bumped = false;
       physic.enable_gravity(false);
       set_sprite(img_stalactite, img_stalactite);
       break;
     case BAD_FLYINGSNOWBALL:
+      bumpable = false;
       physic.enable_gravity(false);
       set_sprite(img_flyingsnowball_left, img_flyingsnowball_right);
       break;
@@ -211,13 +227,27 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       set_sprite(img_spiky_left, img_spiky_right);
       break;
     case BAD_FLAME:
+      bumpable = false;
+      burnable = false;
+      invulnerable = true;
+      turn_when_bumped = false;
       base.ym = 0; // we misuse base.ym as angle for the flame
       physic.enable_gravity(false);
       set_sprite(img_flame, img_flame);
       return; // Do not correct position if it is inside a wall
     case BAD_FISH:
+      bumpable = false;
+      turn_when_bumped = false;
       physic.enable_gravity(true);
       set_sprite(img_fish, img_fish);
+      return; // Do not correct position if it is inside a wall
+    case BAD_LAVABALL:
+      burnable = false;
+      bumpable = false;
+      turn_when_bumped = false;
+      base.ym = y; // Is base.ym even used by the game?
+      physic.enable_gravity(true);
+      set_sprite(img_lavaball_down, img_lavaball_down);
       return; // Do not correct position if it is inside a wall
   }
   // if we're in a solid tile at start correct that now
@@ -376,6 +406,12 @@ BadGuy::fall()
         {
           // not solid below us? enable gravity
           physic.enable_gravity(true);
+
+          if (issolid(base.x+base.width/2, base.y-1) && physic.get_velocity_y() > 0)
+          {
+            base.y = int((base.y - 1)/32) * 32 + base.height;
+            physic.set_velocity_y(0);
+          }
         }
       else
         {
@@ -503,25 +539,26 @@ void
 BadGuy::explode_bomb()
 {
   static const int EXPLODETIME = 1000;
-
+  invulnerable = true;
+  disable_collision = false; // now the bomb hurts
   mode = BOMB_EXPLODE;
-      set_sprite(img_mrbomb_explosion, img_mrbomb_explosion);
-      dying = DYING_NOT; // now the bomb hurts
-      timer.start(EXPLODETIME);
+  set_sprite(img_mrbomb_explosion, img_mrbomb_explosion);
+  dying = DYING_NOT; 
+  timer.start(EXPLODETIME);
 
-      /* play explosion sound */  // FIXME: is the stereo all right? maybe we should use player cordinates...
-      if (base.x < scroll_x + screen->w/2 - 10) {
+  /* play explosion sound */  // FIXME: is the stereo all right? maybe we should use player cordinates...
+  if (base.x < scroll_x + screen->w/2 - 10) {
 #ifndef NOSOUND
 #ifndef GP2X
-        play_sound(sounds[SND_EXPLODE], SOUND_LEFT_SPEAKER);
-	  }
-      else if (base.x > scroll_x + screen->w/2 + 10) {
-        play_sound(sounds[SND_EXPLODE], SOUND_RIGHT_SPEAKER);
-	  }
-      else {
-        play_sound(sounds[SND_EXPLODE], SOUND_CENTER_SPEAKER);
+      play_sound(sounds[SND_EXPLODE], SOUND_LEFT_SPEAKER);
+  }
+    else if (base.x > scroll_x + screen->w/2 + 10) {
+      play_sound(sounds[SND_EXPLODE], SOUND_RIGHT_SPEAKER);
+  }
+    else {
+      play_sound(sounds[SND_EXPLODE], SOUND_CENTER_SPEAKER);
 #else
-	play_chunk(SND_EXPLODE);
+	    play_chunk(SND_EXPLODE);
 #endif
 #endif
       }
@@ -606,25 +643,30 @@ BadGuy::action_fish(double frame_ratio)
 {
   static const float JUMPV = 6;
   static const int WAITTIME = 1000;
-    
-  // go in wait mode when back in water
-  if(dying == DYING_NOT && gettile(base.x, base.y+ base.height)->water
-        && physic.get_velocity_y() <= 0 && mode == NORMAL)
+  
+  if(dying == DYING_NOT)
+  {
+    // go in wait mode when back in water
+    if(gettile(base.x, base.y+ base.height)->water
+          && physic.get_velocity_y() <= 0 && mode == NORMAL)
     {
       mode = FISH_WAIT;
       set_sprite(0, 0);
       physic.set_velocity(0, 0);
       physic.enable_gravity(false);
       timer.start(WAITTIME);
+      disable_collision = true;
     }
-  else if(mode == FISH_WAIT && !timer.check())
+    else if(mode == FISH_WAIT && !timer.check())
     {
       // jump again
       set_sprite(img_fish, img_fish);
       mode = NORMAL;
       physic.set_velocity(0, JUMPV);
       physic.enable_gravity(true);
+      disable_collision = false;
     }
+  }
 
   physic.apply(frame_ratio, base.x, base.y);
   if(dying == DYING_NOT)
@@ -632,6 +674,47 @@ BadGuy::action_fish(double frame_ratio)
 
   if(physic.get_velocity_y() < 0)
     set_sprite(img_fish_down, img_fish_down);
+}
+
+void
+BadGuy::action_lavaball(double frame_ratio)
+{
+  static const float JUMPV = 5;
+  static const int WAITTIME = 1000;
+    
+  // go in wait mode when back in water
+  if (dying == DYING_NOT)
+  {
+    if(gettile(base.x, base.y+ base.height)->water
+          && physic.get_velocity_y() <= 0 && mode == NORMAL)
+    {
+      mode = FISH_WAIT;
+      set_sprite(0, 0);
+      physic.set_velocity(0, 0);
+      physic.enable_gravity(false);
+      timer.start(WAITTIME);
+      disable_collision = true;
+    }
+    else if(mode == FISH_WAIT && !timer.check())
+    {
+      // jump again
+      set_sprite(img_lavaball, img_lavaball);
+      mode = NORMAL;
+      float height = base.y-base.ym;
+      if (height <= 16)
+        height = JUMPV;
+      else
+        height = sqrt(height/World::current()->get_level()->gravity)*1.5f;
+
+      physic.set_velocity(0, height);
+      physic.enable_gravity(true);
+      disable_collision = false;
+    }
+  }
+
+  physic.apply(frame_ratio, base.x, base.y);
+  if(physic.get_velocity_y() < 0)
+    set_sprite(img_lavaball_down, img_lavaball_down);
 }
 
 void
@@ -818,6 +901,10 @@ BadGuy::action(double frame_ratio)
       action_fish(frame_ratio);
       break;
 
+    case BAD_LAVABALL:
+      action_lavaball(frame_ratio);
+      break;
+
     case BAD_BOUNCINGSNOWBALL:
       action_bouncingsnowball(frame_ratio);
       break;
@@ -916,8 +1003,7 @@ void
 BadGuy::bump()
 {
   // these can't be bumped
-  if(kind == BAD_FLAME || kind == BAD_BOMB || kind == BAD_FISH
-      || kind == BAD_FLYINGSNOWBALL)
+  if(invulnerable || !bumpable)
     return;
 
   physic.set_velocity_y(3);
@@ -1052,11 +1138,11 @@ BadGuy::squish(Player* player)
 void
 BadGuy::kill_me(int score)
 {
-  if(removable || kind == BAD_BOMB || kind == BAD_STALACTITE || kind == BAD_FLAME)
+  if(removable || invulnerable)
     return;
 
   dying = DYING_FALLING;
-  if (kind == BAD_MRBOMB)
+  if (kind == BAD_MRBOMB || kind == BAD_BOMB)
   {
     // mrbomb explodes, giving no points
     explode(this, true);
@@ -1090,6 +1176,12 @@ BadGuy::kill_me(int score)
 
 void BadGuy::explode(BadGuy *badguy, bool instant)
 {
+  if (badguy->kind == BAD_BOMB)
+  {
+    if (instant)
+      badguy->explode_bomb();
+    return;
+  }
   BadGuy* bomb = World::current()->add_bad_guy(badguy->base.x, badguy->base.y, BAD_BOMB);
   badguy->remove_me();
   if (instant)
@@ -1121,7 +1213,8 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
           crack_stalactite();
           return;
         }
-        kill_me(10);
+        if (!invulnerable && burnable)
+          kill_me(10);
       break;
 
     case CO_BADGUY:
@@ -1154,8 +1247,7 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
       else
       {
         // Jumpy, fish, flame, stalactites are exceptions
-        if (pbad_c->kind == BAD_JUMPY || pbad_c->kind == BAD_FLAME
-            || pbad_c->kind == BAD_STALACTITE || pbad_c->kind == BAD_FISH)
+        if (!pbad_c->turn_when_bumped)
           break;
 
         // Bounce off of other badguy if we land on top of him
@@ -1200,7 +1292,7 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
     case CO_PLAYER:
       Player* player = static_cast<Player*>(p_c_object);
       /* Get kicked if were flat */
-      if (mode == FLAT && !dying)
+      if (mode == FLAT && disable_collision && !dying)
       {
 #ifndef NOSOUND
 #ifndef GP2X
@@ -1258,9 +1350,14 @@ void load_badguy_gfx()
   img_mrbomb_explosion = sprite_manager->load("mrbomb-explosion");
   img_stalactite = sprite_manager->load("stalactite");
   img_stalactite_broken = sprite_manager->load("stalactite-broken");
+
   img_flame = sprite_manager->load("flame");
+
   img_fish = sprite_manager->load("fish");
   img_fish_down = sprite_manager->load("fish-down");
+  img_lavaball = sprite_manager->load("lavaball");
+  img_lavaball_down = sprite_manager->load("lavaball-down");
+
   img_bouncingsnowball_left = sprite_manager->load("bouncingsnowball-left");
   img_bouncingsnowball_right = sprite_manager->load("bouncingsnowball-right");
   img_bouncingsnowball_squished_left = sprite_manager->load("bouncingsnowball-squished-left");

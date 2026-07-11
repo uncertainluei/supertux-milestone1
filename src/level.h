@@ -98,7 +98,7 @@ class Level
 
   std::vector<BadGuyData> badguy_data;
 
-  /** A collection of points to which Tux can be reset after a lost live */
+  /** A collection of points to which Tux can be reset after a lost life */
   std::vector<ResetPoint> reset_points;
  public:
   Level();

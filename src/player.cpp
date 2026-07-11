@@ -668,7 +668,7 @@ Player::collision(void* p_c_object, int c_object)
       pbad_c = (BadGuy*) p_c_object;
 
      /* Hurt player if he touches a badguy */
-      if (!pbad_c->dying && !dying &&
+      if (!pbad_c->dying && !pbad_c->disable_collision && !dying &&
           !safe_timer.started() &&
           pbad_c->mode != BadGuy::HELD)
         {
@@ -808,7 +808,7 @@ Player::check_bounds(bool back_scrolling, bool hor_autoscroll)
 #ifndef RES320X240
   if (base.y > screen->h && dying == DYING_NOT)
 #else
-  if (base.y > 640)
+  if (base.y > 640  && dying == DYING_NOT)
 #endif
     {
       kill(KILL);
