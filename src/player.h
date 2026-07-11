@@ -127,7 +127,6 @@ public:
 
   bool jumping;
   bool can_jump;
-  bool pit_failsafe;
   int frame_;
   int frame_main;
 

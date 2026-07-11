@@ -88,7 +88,6 @@ Player::init()
   dying   = DYING_NOT;
   jumping = false;
   can_jump = true;
-  pit_failsafe = false;
 
   frame_main = 0;
   frame_ = 0;
@@ -776,15 +775,8 @@ Player::is_dying()
 
 bool Player::is_dead()
 {
-  if(pit_failsafe)
-  {
-    if (base.y < screen->h)
-      pit_failsafe = false;
-
-    return false;
-  }
 #ifndef RES320X240
-  if(base.y > screen->h || base.x < scroll_x - AUTOSCROLL_DEAD_INTERVAL)  // last condition can happen in auto-scrolling
+  if(base.y > screen->h+base.height || base.x < scroll_x - AUTOSCROLL_DEAD_INTERVAL)  // last condition can happen in auto-scrolling
 #else
   if(base.y > 640 || base.x < scroll_x - AUTOSCROLL_DEAD_INTERVAL)  // last condition can happen in auto-scrolling
 #endif
@@ -819,7 +811,6 @@ Player::check_bounds(bool back_scrolling, bool hor_autoscroll)
   if (base.y > 640)
 #endif
     {
-      pit_failsafe = true;
       kill(KILL);
 #ifndef NOSOUND
 #ifdef GP2X    

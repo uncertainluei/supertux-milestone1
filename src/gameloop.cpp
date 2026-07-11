@@ -173,18 +173,18 @@ GameSession::levelintro(void)
   switch (player_status.bonus)
   {
   case PlayerStatus::GROWUP_BONUS:
-    largetux.stand_right->draw(screen->h/2+24, 224);
+    largetux.stand_right->draw(screen->w/2-48, 224);
     break;
   case PlayerStatus::FLOWER_BONUS:
-    firetux.stand_right->draw(screen->h/2+24, 224);
+    firetux.stand_right->draw(screen->w/2-48, 224);
     break;
   default:
-    smalltux.stand_right->draw(screen->h/2+24, 240);
+    smalltux.stand_right->draw(screen->w/2-48, 240);
     break;
   }
 
   sprintf(str, "x %d", player_status.lives);
-  white_text->drawf(str, screen->h/2+72, 250, A_LEFT, A_TOP, 1);
+  white_text->drawf(str, screen->w/2+0, 250, A_LEFT, A_TOP, 1);
 
   sprintf(str, "%s", world->get_level()->name.c_str());
   gold_text->drawf(str, 0, 180, A_HMIDDLE, A_TOP, 1);
@@ -218,14 +218,26 @@ GameSession::on_escape_press()
     return;
 
   if(st_gl_mode == ST_GL_TEST)
-    {
-      exit_status = ES_LEVEL_ABORT;
-    }
-  else if (!Menu::current())
-    {
-      Menu::set_current(game_menu);
-      st_pause_ticks_start();
-    }
+  {
+    exit_status = ES_LEVEL_ABORT;
+    return;
+  }
+  if (end_sequence != NO_ENDSEQUENCE)
+  {
+    exit_status = ES_LEVEL_FINISHED;
+    return;
+  }
+  Player& tux = *world->get_tux();
+  if (tux.dying != DYING_NOT)
+  {
+    exit_status = ES_LEVEL_FAILED;
+    return;
+  }
+  if (!Menu::current())
+  {
+    Menu::set_current(game_menu);
+    st_pause_ticks_start();
+  }
 }
 
 void
@@ -592,7 +604,6 @@ GameSession::check_end_conditions()
 #ifndef NOSOUND
       music_manager->play_music(level_end_song, 0);
 #endif
-      time_left.stop();
       endsequence_timer.start(7000);
       tux->invincible_timer.start(7000); //FIXME: Implement a winning timer for the end sequence (with special winning animation etc.)
     }
@@ -615,7 +626,7 @@ GameSession::check_end_conditions()
 	  endsequence_timer.start(7000); // 5 seconds until we finish the map
       tux->invincible_timer.start(7000); //FIXME: Implement a winning timer for the end sequence (with special winning animation etc.)
     }
-  else if (!end_sequence && tux->is_dead())
+  else if (!end_sequence && (tux->is_dead() || exit_status == ES_LEVEL_FAILED))
     {
       player_status.bonus = PlayerStatus::NO_BONUS;
 
@@ -909,7 +920,7 @@ GameSession::drawstatus()
 
   sprintf(str, "%d", player_status.score);
   //white_text->draw("SCORE", 0, 0, 1);
-  gold_text->draw_align(str, screen->h+156/xdiv, 4, A_RIGHT, A_TOP);
+  gold_text->draw_align(str, screen->w-8/xdiv, 4, A_RIGHT, A_TOP);
 
 
   if(st_gl_mode == ST_GL_TEST)
@@ -919,16 +930,13 @@ GameSession::drawstatus()
 
   if (has_timer)
   {
-    sprintf(str, "%d", time_left.get_left() / 1000);
-    hud_time->draw(screen->h+64/xdiv, 24);
-    gold_text->draw_align(str, screen->h+128/xdiv, 24, A_HMIDDLE, A_TOP);
-    //gold_text->draw(str, screen->h+96/xdiv, 24, 1);
-    // if(!time_left.check()) {
-    //   white_text->draw("TIME'S UP", 224/xdiv, 0, 1);
-    // } else if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) {
-    //   sprintf(str, "%d", time_left.get_left() / 1000 );
-    //   //white_text->draw("TIME", 224/xdiv, 0, 1);
-    // }
+    int time = time_left.get_left() / 1000;
+    if (time < 0) time = 0;
+
+    sprintf(str, "%d", time);
+    hud_time->draw(screen->w-96/xdiv, 24);
+    if (time_left.get_left() > TIME_WARNING || (global_frame_counter % 10) < 5) 
+      gold_text->draw_align(str, screen->w-32/xdiv, 24, A_HMIDDLE, A_TOP);
   }
 
   sprintf(str, "%d", player_status.distros);
