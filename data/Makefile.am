@@ -9,6 +9,7 @@ EXTRA_DIST = \
   $(wildcard images/icons/*.png) \
   $(wildcard images/icons/*.xpm) \
   $(wildcard images/shared/*.png) \
+  $(wildcard images/shared/*/*.png) \
   $(wildcard images/status/*.png) \
   $(wildcard images/worldmap/*.png) \
   $(wildcard images/worldmap/*.stwt) \
