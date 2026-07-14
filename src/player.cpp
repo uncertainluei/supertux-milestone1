@@ -103,7 +103,7 @@ Player::init()
 }
 
 int
-Player::key_event(SDL_Keycode key, int state)
+Player::key_event(SDLKey key, int state)
 {
   if(key == keymap.right)
     {
@@ -672,7 +672,15 @@ Player::collision(void* p_c_object, int c_object)
 void
 Player::kill(HurtMode mode)
 {
-  play_sound(SND_HURT);
+#ifndef NOSOUND
+#ifndef GP2X
+  play_sound(sounds[SND_HURT], SOUND_CENTER_SPEAKER);
+#else
+  play_chunk(SND_HURT);
+  updateSound();
+#endif
+#endif
+
   physic.set_velocity_x(0);
 
   if (mode == SHRINK && size == BIG)
@@ -746,6 +754,15 @@ Player::check_bounds(bool back_scrolling, bool hor_autoscroll)
 #endif
     {
       kill(KILL);
+#ifndef NOSOUND
+#ifdef GP2X    
+      float wait=SDL_GetTicks()+800;
+      while ( wait > SDL_GetTicks()) {
+         updateSound();
+      }
+#endif
+#endif
+
     }
 
   if(base.x < scroll_x && (!back_scrolling || hor_autoscroll))  // can happen if back scrolling is disabled

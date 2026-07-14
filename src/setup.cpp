@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string>
 #include <SDL.h>
@@ -37,6 +38,7 @@
 #ifndef WIN32
 #include <libgen.h>
 #endif
+#include <ctype.h>
 
 #include "defines.h"
 #include "globals.h"
@@ -46,6 +48,7 @@
 #include "menu.h"
 #include "gameloop.h"
 #include "configfile.h"
+#include "scene.h"
 #include "worldmap.h"
 #include "resources.h"
 #include "intro.h"
@@ -643,16 +646,9 @@ void st_general_setup(void)
   seticon();
 #endif
 
-  /* Initialize SDL2_mixer with required codecs */
+  /* Unicode needed for input handling: */
 
-  const int mixer_flags = MIX_INIT_OGG | MIX_INIT_MOD;
-  if (Mix_Init(mixer_flags) != mixer_flags)
-  {
-    fprintf(stderr, "Mix_Init: Failed to init required codecs! %s\n", Mix_GetError());
-    st_shutdown();
-    abort();
-    return;
-  }
+  SDL_EnableUNICODE(1);
 
   /* Load global images: */
 
@@ -744,86 +740,80 @@ void st_video_setup(void)
   /* Init SDL Video: */
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-      char err[256];
-      sprintf(err, "Error: I could not initialize video!\n"
-                  "The Simple DirectMedia error that occured was:\n"
-                  "%s\n\n", SDL_GetError());
-      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", err, window);
+      fprintf(stderr,
+              "\nError: I could not initialize video!\n"
+              "The Simple DirectMedia error that occured was:\n"
+              "%s\n\n", SDL_GetError());
+#ifdef GP2X_VERSION
+    chdir("/usr/gp2x");
+    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);    
+#endif
+
       exit(1);
     }
 
-  int wnd_x, wnd_y = SDL_WINDOWPOS_CENTERED;
-  SDL_Rect bounds;
-  if (SDL_GetDisplayBounds(display_idx, &bounds) == 0)
-  {
-    wnd_x = bounds.x + (bounds.w - SCREEN_W) / 2;
-    wnd_y = bounds.y + (bounds.h - SCREEN_H) / 2;
-  }
-  else
-  {
-    printf("Failed to get bounds for display %d: %s\n", display_idx, SDL_GetError());
-    display_idx = 0;
-  }
-
   /* Open display: */
   if(use_gl)
-    st_video_setup_gl(wnd_x, wnd_y);
+    st_video_setup_gl();
   else
-    st_video_setup_sdl(wnd_x, wnd_y);
-  if (use_fullscreen)
-  {
-    if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN) < 0)
-    {
-      printf("Failed to set window to fullscreen mode: %s\n", SDL_GetError());
-      use_fullscreen = false;
-    }
-  }
+    st_video_setup_sdl();
 
   Surface::reload_all();
 
   /* Set window manager stuff: */
-// #ifndef GP2X_VERSION
-//   SDL_WM_SetCaption("SuperTux " VERSION, "SuperTux");
-// #endif
-}
-
-void st_video_setup_sdl(int wnd_x, int wnd_y)
-{
-  // Destroy OpenGL video
-#ifndef NOOPENGL
-  if (!screen)
-    SDL_GL_DeleteContext(glcontext);
+#ifndef GP2X_VERSION
+  SDL_WM_SetCaption("SuperTux " VERSION, "SuperTux");
 #endif
-  SDL_DestroyWindow(window);
-
-  window = SDL_CreateWindow("SuperTux " VERSION, wnd_x, wnd_y, SCREEN_W, SCREEN_H,
-      SDL_WINDOW_RESIZABLE);
-  if (window == NULL)
-  {
-    char err[256];
-    sprintf(err, "Error: I could not set up video for 640x480 mode.\n"
-                "The Simple DirectMedia error that occured was:\n"
-                "%s\n\n", SDL_GetError());
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", err, window);
-
-    exit(1);
-  }
-
-  renderer = SDL_CreateRenderer(window, -1, 0);
-  screen = SDL_CreateRGBSurface(0, SCREEN_W, SCREEN_H, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-  sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H);
-
-  SDL_RenderSetLogicalSize(renderer, SCREEN_W, SCREEN_H);
-  SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
 }
 
-void st_video_setup_gl(int wnd_x, int wnd_y)
+void st_video_setup_sdl(void)
+{
+  if (use_fullscreen)
+    {
+#ifndef GP2X
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 0, SDL_FULLSCREEN ) ; /* | SDL_HWSURFACE); */
+#else
+//      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 16, SDL_HWSURFACE | SDL_DOUBLEBUF ) ; /* GP2X */
+      printf("screen width: %d, height: %d\n",SCREEN_W, SCREEN_H);
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 16, SDL_SWSURFACE ) ; /* GP2X */
+#endif
+      if (screen == NULL)
+        {
+          fprintf(stderr,
+                  "\nWarning: I could not set up fullscreen video for "
+                  "640x480 mode.\n"
+                  "The Simple DirectMedia error that occured was:\n"
+                  "%s\n\n", SDL_GetError());
+          use_fullscreen = false;
+        }
+    }
+  else
+    {
+#ifndef GP2X
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 0, SDL_HWSURFACE | SDL_DOUBLEBUF );
+
+#else
+//      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 16, SDL_HWSURFACE | SDL_DOUBLEBUF ) ; /* GP2X */
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 16, SDL_SWSURFACE ) ; /* GP2X */
+#endif
+      if (screen == NULL)
+        {
+          fprintf(stderr,
+                  "\nError: I could not set up video for 640x480 mode.\n"
+                  "The Simple DirectMedia error that occured was:\n"
+                  "%s\n\n", SDL_GetError());
+#ifdef GP2X_VERSION
+    chdir("/usr/gp2x");
+    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);    
+#endif
+          exit(1);
+        }
+    }
+}
+
+void st_video_setup_gl(void)
 {
 #ifndef NOOPENGL
-  SDL_DestroyTexture(sdl_texture);
-  SDL_FreeSurface(screen);
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
 
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -831,19 +821,33 @@ void st_video_setup_gl(int wnd_x, int wnd_y)
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  window = SDL_CreateWindow("SuperTux " VERSION, wnd_x, wnd_y, SCREEN_W, SCREEN_H,
-      SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-  if (window == NULL)
-  {
-    char err[256];
-    sprintf(err, "Error: I could not set up video for 640x480 mode in OpenGL.\n"
-                "The Simple DirectMedia error that occured was:\n"
-                "%s\n\n", SDL_GetError());
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", err, window);
+  if (use_fullscreen)
+    {
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 0, SDL_FULLSCREEN | SDL_OPENGL) ; /* | SDL_HWSURFACE); */
+      if (screen == NULL)
+        {
+          fprintf(stderr,
+                  "\nWarning: I could not set up fullscreen video for "
+                  "640x480 mode.\n"
+                  "The Simple DirectMedia error that occured was:\n"
+                  "%s\n\n", SDL_GetError());
+          use_fullscreen = false;
+        }
+    }
+  else
+    {
+      screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 0, SDL_OPENGL);
 
-    exit(1);
-  }
-  glcontext = SDL_GL_CreateContext(window);
+      if (screen == NULL)
+        {
+          fprintf(stderr,
+                  "\nError: I could not set up video for 640x480 mode.\n"
+                  "The Simple DirectMedia error that occured was:\n"
+                  "%s\n\n", SDL_GetError());
+          exit(1);
+        }
+    }
+
   /*
    * Set up OpenGL for 2D rendering.
    */
@@ -851,11 +855,6 @@ void st_video_setup_gl(int wnd_x, int wnd_y)
   glDisable(GL_CULL_FACE);
 
   glViewport(0, 0, screen->w, screen->h);
-  glviewport_x = 0;
-  glviewport_y = 0;
-  glviewport_w = screen->w;
-  glviewport_h = screen->h;
-
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, screen->w, screen->h, 0, -1.0, 1.0);
@@ -865,50 +864,7 @@ void st_video_setup_gl(int wnd_x, int wnd_y)
   glTranslatef(0.0f, 0.0f, 0.0f);
 
 #endif
-}
 
-int poll_event(SDL_Event& ev)
-{
-  const int result = SDL_PollEvent(&ev);
-#ifndef NOOPENGL
-  if (result)
-  {
-    if (use_gl)
-    {
-      // OpenGL: Center and resize the logical screen on window resize
-      if (ev.type == SDL_WINDOWEVENT &&
-          ev.window.event == SDL_WINDOWEVENT_RESIZED)
-      {
-        int win_w, win_h;
-        SDL_GetWindowSize(window, &win_w, &win_h);
-
-        const float scale_x = win_w / screen->w;
-        const float scale_y = win_h / screen->h;
-        const float scale = scale_x < scale_y ? scale_x : scale_y;
-
-        glviewport_w = static_cast<int>(screen->w * scale);
-        glviewport_h = static_cast<int>(screen->h * scale);
-        glviewport_x = (win_w - glviewport_w) / 2;
-        glviewport_y = (win_h - glviewport_h) / 2;
-
-        clearscreen(0, 0, 0);
-        glViewport(glviewport_x, glviewport_y, glviewport_w, glviewport_h);
-      }
-      // OpenGL: Translate mouse motion event mouse position to logical screen
-      else if (ev.type == SDL_MOUSEMOTION)
-      {
-        ev.motion.x = static_cast<int>((ev.motion.x - glviewport_x) * (static_cast<float>(screen->w) / glviewport_w));
-        ev.motion.y = static_cast<int>((ev.motion.y - glviewport_y) * (static_cast<float>(screen->h) / glviewport_h));
-      }
-      else if (ev.type == SDL_MOUSEBUTTONUP || ev.type == SDL_MOUSEBUTTONDOWN)
-      {
-        ev.button.x = static_cast<int>((ev.motion.x - glviewport_x) * (static_cast<float>(screen->w) / glviewport_w));
-        ev.button.y = static_cast<int>((ev.motion.y - glviewport_y) * (static_cast<float>(screen->h) / glviewport_h));
-      }
-    }
-  }
-#endif
-  return result;
 }
 
 void st_joystick_setup(void)
@@ -1044,25 +1000,9 @@ void st_audio_setup(void)
 
 void st_shutdown(void)
 {
-    display_idx = SDL_GetWindowDisplayIndex(window);
 #ifndef NOSOUND
   close_audio();
 #endif
-#ifndef NOOPENGL
-  if (use_gl)
-    SDL_GL_DeleteContext(glcontext);
-  else
-  {
-#endif
-    SDL_DestroyTexture(sdl_texture);
-    SDL_FreeSurface(screen);
-    SDL_DestroyRenderer(renderer);
-#ifndef NOOPENGL
-  }
-#endif
-  SDL_DestroyWindow(window);
-
-  close_audio();
   SDL_Quit();
   saveconfig();
 #ifdef GP2X
@@ -1113,7 +1053,7 @@ void seticon(void)
 
   /* Set icon: */
 
-  SDL_SetWindowIcon(window, icon);
+  SDL_WM_SetIcon(icon, NULL);//mask);
 
 
   /* Free icon surface & mask: */

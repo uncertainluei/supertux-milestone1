@@ -137,8 +137,10 @@ void loadshared()
                     Send a mail to me: neoneurone@users.sf.net, if you have another opinion. :)
   */
 #ifndef NOSOUND
+#ifndef GP2X
   for (i = 0; i < NUM_SOUNDS; i++)
     sounds[i] = load_sound(datadir + soundfilenames[i]);
+#endif
 
   /* Herring song */
   herring_song = music_manager->load_music(datadir + "/music/invincible.ogg");
@@ -158,8 +160,10 @@ void unloadshared(void)
   delete tux_life;
 
 #ifndef NOSOUND
-  // for (i = 0; i < NUM_SOUNDS; i++)
-  //   free_chunk(sounds[i]);
+#ifndef GP2X
+  for (i = 0; i < NUM_SOUNDS; i++)
+    free_chunk(sounds[i]);
+#endif
 #endif
 
   delete sprite_manager;

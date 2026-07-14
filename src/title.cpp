@@ -200,14 +200,14 @@ void draw_demo(GameSession* session, double frame_ratio)
 #endif
   
   global_frame_counter++;
-  tux->key_event((SDL_Keycode) keymap.right,DOWN);
+  tux->key_event((SDLKey) keymap.right,DOWN);
   
   if(random_timer.check())
     {
       if(walking)
-        tux->key_event((SDL_Keycode) keymap.jump,UP);
+        tux->key_event((SDLKey) keymap.jump,UP);
       else
-        tux->key_event((SDL_Keycode) keymap.jump,DOWN);
+        tux->key_event((SDLKey) keymap.jump,DOWN);
     }
   else
     {

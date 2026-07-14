@@ -194,11 +194,9 @@ void drawpixel(int x, int y, Uint32 pixel)
     }
   /* Update just the part of the display that we've changed */
 #ifndef RES320X240
-  SDL_Rect rect[1] = {x,y,1,1};
-  SDL_UpdateWindowSurfaceRects(window, rect, 1);
+  SDL_UpdateRect(screen, x, y, 1, 1);
 #else
-  SDL_Rect rect[1] = {x/2,y/2,1,1};
-  SDL_UpdateWindowSurfaceRects(window, rect, 1);
+  SDL_UpdateRect(screen, x/2, y/2, 1, 1);
 #endif
 }
 
@@ -337,7 +335,7 @@ if(h < 0)
 
           SDL_FillRect(temp, &src, SDL_MapRGB(screen->format, r, g, b));
 
-          SDL_SetSurfaceAlphaMod(temp, a);
+          SDL_SetAlpha(temp, SDL_SRCALPHA, a);
 
           SDL_BlitSurface(temp,0,screen,&rect);
 
@@ -358,23 +356,17 @@ if(h < 0)
 void updatescreen(void)
 {
   if(use_gl)  /*clearscreen(0,0,0);*/
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapBuffers();
   else
-    SDL_UpdateTexture(sdl_texture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, sdl_texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
+    SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
 }
 
 void flipscreen(void)
 {
   if(use_gl)
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapBuffers();
   else
-    SDL_UpdateTexture(sdl_texture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, sdl_texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
+    SDL_Flip(screen);
 }
 
 void fadeout()
@@ -387,9 +379,10 @@ void fadeout()
 void update_rect(SDL_Surface *scr, Sint32 x, Sint32 y, Sint32 w, Sint32 h)
 {
   if(!use_gl)
-  {
-    SDL_Rect rect[1] = {x,y,w,h};
-    SDL_UpdateWindowSurfaceRects(window, rect, 1);
-  }
+#ifndef RES320X240
+    SDL_UpdateRect(scr, x, y, w, h);
+#else
+    SDL_UpdateRect(scr, x, y, w, h);
+#endif
 }
 

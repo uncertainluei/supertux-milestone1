@@ -671,15 +671,15 @@ WorldMap::get_input()
 
   if (!Menu::current())
     {
-      const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+      Uint8 *keystate = SDL_GetKeyState(NULL);
   
-      if (keystate[SDL_SCANCODE_LEFT])
+      if (keystate[SDLK_LEFT])
         input_direction = D_WEST;
-      else if (keystate[SDL_SCANCODE_RIGHT])
+      else if (keystate[SDLK_RIGHT])
         input_direction = D_EAST;
-      else if (keystate[SDL_SCANCODE_UP])
+      else if (keystate[SDLK_UP])
         input_direction = D_NORTH;
-      else if (keystate[SDL_SCANCODE_DOWN])
+      else if (keystate[SDLK_DOWN])
         input_direction = D_SOUTH;
     }
 }
@@ -862,7 +862,14 @@ WorldMap::update(float delta)
 			if (level->x == tux->get_tile_pos().x && 
               level->y == tux->get_tile_pos().y)
 				{
-					play_sound(SND_TELEPORT);
+#ifndef NOSOUND
+#ifndef GP2X
+					play_sound(sounds[SND_TELEPORT], SOUND_CENTER_SPEAKER);
+#else
+					play_chunk(SND_TELEPORT);
+					updateSound();
+#endif
+#endif
 					tux->back_direction = D_NONE;
 					tux->set_tile_pos(Point(level->teleport_dest_x, level->teleport_dest_y));
 					SDL_Delay(1000);

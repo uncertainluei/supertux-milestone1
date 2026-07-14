@@ -36,8 +36,8 @@ void free_strings(char **strings, int num);
 void st_directory_setup(void);
 void st_general_setup(void);
 void st_general_free();
-void st_video_setup_sdl(int wnd_x, int wnd_y);
-void st_video_setup_gl(int wnd_x, int wnd_y);
+void st_video_setup_sdl(void);
+void st_video_setup_gl(void);
 void st_video_setup(void);
 void st_audio_setup(void);
 void st_joystick_setup(void);
@@ -51,8 +51,6 @@ bool process_load_game_menu();
 
 void update_load_save_game_menu(Menu* pmenu);
 void parseargs(int argc, char * argv[]);
-
-int poll_event(SDL_Event& ev);
 
 #endif /*SUPERTUX_SETUP_H*/
 
