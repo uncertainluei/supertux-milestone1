@@ -151,6 +151,9 @@ private:
   void action_spiky(double frame_ratio);
   void action_snowball(double frame_ratio);
 
+  void action_dead_squished(double frame_ratio);
+  void action_dead_falling(double frame_ratio);
+
   void explode_bomb(); // Exploding action
   void crack_stalactite(); // Put stalactite into cracking mode
 
