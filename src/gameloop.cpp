@@ -278,7 +278,7 @@ GameSession::process_events()
               
             case SDL_KEYDOWN:     /* A keypress! */
               {
-                SDLKey key = event.key.keysym.sym;
+                SDL_Keycode key = event.key.keysym.sym;
            
                 switch(key)
                   {
@@ -316,11 +316,11 @@ GameSession::process_events()
                it could have nasty bugs, like going allways to the right
                or whatever that key does */
             Player& tux = *world->get_tux();
-            tux.key_event((SDLKey)keymap.jump, UP);
-            tux.key_event((SDLKey)keymap.duck, UP);
-            tux.key_event((SDLKey)keymap.left, UP);
-            tux.key_event((SDLKey)keymap.right, UP);
-            tux.key_event((SDLKey)keymap.fire, UP);
+            tux.key_event((SDL_Keycode)keymap.jump, UP);
+            tux.key_event((SDL_Keycode)keymap.duck, UP);
+            tux.key_event((SDL_Keycode)keymap.left, UP);
+            tux.key_event((SDL_Keycode)keymap.right, UP);
+            tux.key_event((SDL_Keycode)keymap.fire, UP);
             }
           else
             {
@@ -335,7 +335,7 @@ GameSession::process_events()
 
                 case SDL_KEYDOWN:     /* A keypress! */
                   {
-                    SDLKey key = event.key.keysym.sym;
+                    SDL_Keycode key = event.key.keysym.sym;
             
                     if(tux.key_event(key,DOWN))
                       break;
@@ -352,7 +352,7 @@ GameSession::process_events()
                   break;
                 case SDL_KEYUP:      /* A keyrelease! */
                   {
-                    SDLKey key = event.key.keysym.sym;
+                    SDL_Keycode key = event.key.keysym.sym;
 
                     if(tux.key_event(key, UP))
                       break;
@@ -895,14 +895,7 @@ void bumpbrick(float x, float y)
 {
   World::current()->add_bouncy_brick(((int)(x + 1) / (32)) * (32),
                          (int)(y / (32)) * (32));
-
-#ifndef NOSOUND
-#ifndef GP2X
-  play_sound(sounds[SND_BRICK], SOUND_CENTER_SPEAKER);
-#else
-  play_chunk(SND_BRICK);
-#endif
-#endif
+  play_sound(SND_BRICK);
 }
 
 /* (Status): */

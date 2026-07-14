@@ -83,6 +83,12 @@ struct JoystickKeymap
 extern JoystickKeymap joystick_keymap;
 
 extern SDL_Surface * screen;
+extern SDL_Window* window;
+extern SDL_Renderer* renderer;
+extern SDL_Texture* sdl_texture;
+extern SDL_GLContext glcontext;
+extern int glviewport_x, glviewport_y, glviewport_w, glviewport_h;
+
 extern Text* black_text;
 extern Text* gold_text;
 extern Text* silver_text;
@@ -95,6 +101,7 @@ extern Text* green_text;
 
 extern MouseCursor * mouse_cursor;
 
+extern int  display_idx;
 extern bool use_gl;
 extern bool use_joystick;
 extern bool use_fullscreen;

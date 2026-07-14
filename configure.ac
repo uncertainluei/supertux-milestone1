@@ -17,7 +17,7 @@ AC_CONFIG_SRCDIR([src/supertux.cpp])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE(dist-bzip2)
 
-SDL_VERSION=1.2.4
+SDL_VERSION=2.0.10
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -69,7 +69,7 @@ fi
 
 dnl ===========================================================================
 dnl Check for SDL
-PKG_CHECK_MODULES([SDL], [sdl >= $SDL_VERSION],,
+PKG_CHECK_MODULES([SDL], [sdl2 >= $SDL_VERSION],,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
@@ -85,11 +85,11 @@ AC_ARG_ENABLE(silence,
 if test x$enable_silence = xyes; then
     CXXFLAGS="$CXXFLAGS -DNOSOUND"
 else
-PKG_CHECK_MODULES([SDL_MIXER], [SDL_mixer], ,
-	AC_MSG_ERROR([SDL_mixer library required]))
-CXXFLAGS="$CXXFLAGS $SDL_MIXER_CFLAGS"
-CFLAGS="$CFLAGS $SDL_MIXER_CFLAGS"
-LIBS="$LIBS $SDL_MIXER_LIBS"
+PKG_CHECK_MODULES([SDL2_MIXER], [SDL2_mixer], ,
+	AC_MSG_ERROR([SDL2_mixer library required]))
+CXXFLAGS="$CXXFLAGS $SDL2_MIXER_CFLAGS"
+CFLAGS="$CFLAGS $SDL2_MIXER_CFLAGS"
+LIBS="$LIBS $SDL2_MIXER_LIBS"
 AC_DEFINE(HAVE_SOUND, 1, [Compile with sound support])
 fi
 AM_CONDITIONAL(HAVE_SOUND, test "x$enable_silence" != "xyes")
@@ -132,11 +132,11 @@ AC_CHECK_LIB(jpeg,jpeg_abort)
 
 AC_CHECK_LIB(png,png_free)
 
-PKG_CHECK_MODULES([SDL_IMAGE], [SDL_image], ,
-	AC_MSG_ERROR([SDL_image library required]))
-CXXFLAGS="$CXXFLAGS $SDL_IMAGE_CFLAGS"
-CFLAGS="$CFLAGS $SDL_IMAGE_CFLAGS"
-LIBS="$LIBS $SDL_IMAGE_LIBS"
+PKG_CHECK_MODULES([SDL2_IMAGE], [SDL2_image], ,
+	AC_MSG_ERROR([SDL2_image library required]))
+CXXFLAGS="$CXXFLAGS $SDL2_IMAGE_CFLAGS"
+CFLAGS="$CFLAGS $SDL2_IMAGE_CFLAGS"
+LIBS="$LIBS $SDL2_IMAGE_LIBS"
 
 if test "x${enable_opengl}" != "xno"; then
   AX_CHECK_GL
