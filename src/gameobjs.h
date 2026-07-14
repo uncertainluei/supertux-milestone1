@@ -22,6 +22,7 @@
 #ifndef SUPERTUX_GAMEOBJS_H
 #define SUPERTUX_GAMEOBJS_H
 
+#include "sprite.h"
 #include "type.h"
 #include "texture.h"
 #include "timer.h"
@@ -41,7 +42,7 @@ class BouncyDistro : public GameObject
   std::string type() { return "BouncyDistro"; };
 };
 
-extern Surface* img_distro[4];
+extern Sprite* img_coin;
 
 #define BOUNCY_BRICK_MAX_OFFSET 8
 #define BOUNCY_BRICK_SPEED 0.9

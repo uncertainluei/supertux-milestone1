@@ -553,6 +553,11 @@
                  "shared/powerup/fireflower-3.png"
                  "shared/powerup/fireflower-2.png"
                  "shared/powerup/fireflower-1.png"))
+ (sprite (name "coin")
+         (images "tilesets/coin1.png"
+                 "tilesets/coin2.png"
+                 "tilesets/coin3.png"
+                 "tilesets/coin4.png"))
 
  (sprite (name "bullet")
          (x-hotspot 12)
