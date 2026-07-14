@@ -105,18 +105,7 @@ void loadshared()
   load_special_gfx();
 
   /* Coins: */
-  img_distro[0] = new Surface(datadir + "/images/tilesets/coin1.png",
-               USE_ALPHA);
-
-  img_distro[1] = new Surface(datadir + "/images/tilesets/coin2.png",
-               USE_ALPHA);
-
-  img_distro[2] = new Surface(datadir + "/images/tilesets/coin3.png",
-               USE_ALPHA);
-
-  img_distro[3] = new Surface(datadir + "/images/tilesets/coin4.png",
-               USE_ALPHA);
-
+  img_coin            = sprite_manager->load("coin");
 
   /* Hud sprites: */
 

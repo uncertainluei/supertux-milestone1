@@ -24,6 +24,8 @@
 #include "gameloop.h"
 #include "gameobjs.h"
 
+Sprite* img_coin;
+
 void
 BouncyDistro::init(float x, float y)
 {
@@ -53,8 +55,7 @@ BouncyDistro::action(double frame_ratio)
 void
 BouncyDistro::draw()
 {
-  img_distro[0]->draw(base.x - scroll_x,
-                      base.y);
+  img_coin->draw(base.x - scroll_x, base.y);
 }
 
 
