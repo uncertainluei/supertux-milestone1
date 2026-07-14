@@ -6,7 +6,7 @@ Super Mario Bros. games for the various Nintendo platforms.
 Run and jump through multiple worlds, fighting off enemies by jumping
 on them or bumping them from below, grabbing power-ups and other stuff on the way.
 
-This is a **fork** of the latest version of Milestone 1 containing changes that fix gripes and oddities within the version while also adding features from both newer versions whilst reasonably keeping the original direction.
+This is a **fork** of the latest version of Milestone 1 containing changes that fix gripes and oddities within the version while also adding newer (and sometimes older) features whilst reasonably keeping the original direction.
 
 ![Screenshot](https://www.supertux.org/images/supertux-0.1.3-6.png)
 
