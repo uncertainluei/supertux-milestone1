@@ -70,6 +70,9 @@ public:
    */
   bool goal;
 
+  /** Harms Tux and non-invulnerable badguys on collision */
+  bool deadly;
+
   /** General purpose data attached to a tile (content of a box, type of coin) */
   int data;
 

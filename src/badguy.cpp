@@ -181,6 +181,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
   bumpable = true;
   invulnerable = false;
   turn_when_bumped = true;
+  check_tiles = true;
 
   switch (kind) {
     case BAD_SNOWBALL:
@@ -214,6 +215,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       bumpable = false;
       invulnerable = true;
       turn_when_bumped = false;
+      check_tiles = false;
       physic.enable_gravity(false);
       set_sprite(img_stalactite, img_stalactite);
       break;
@@ -231,6 +233,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       burnable = false;
       invulnerable = true;
       turn_when_bumped = false;
+      check_tiles = false;
       base.ym = 0; // we misuse base.ym as angle for the flame
       physic.enable_gravity(false);
       set_sprite(img_flame, img_flame);
@@ -238,6 +241,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
     case BAD_FISH:
       bumpable = false;
       turn_when_bumped = false;
+      check_tiles = false; // Let it jump into lava ig
       physic.enable_gravity(true);
       set_sprite(img_fish, img_fish);
       return; // Do not correct position if it is inside a wall
@@ -245,6 +249,7 @@ BadGuy::BadGuy(float x, float y, BadGuyKind kind_, bool stay_on_platform_)
       burnable = false;
       bumpable = false;
       turn_when_bumped = false;
+      check_tiles = false;
       base.ym = y; // Is base.ym even used by the game?
       physic.enable_gravity(true);
       set_sprite(img_lavaball_down, img_lavaball_down);
@@ -794,6 +799,9 @@ BadGuy::action(double frame_ratio)
       return action_dead_squished(frame_ratio);
   }
 
+  if (check_tiles)
+    check_current_tiles();
+
   switch (kind) {
     case BAD_MRICEBLOCK:
       return action_mriceblock(frame_ratio);
@@ -822,6 +830,15 @@ BadGuy::action(double frame_ratio)
     default:
       return;
   }
+}
+
+void
+BadGuy::check_current_tiles()
+{
+  World::current()->try_tile_interact(base.x, base.y, this, CO_BADGUY);
+  World::current()->try_tile_interact(base.x+31, base.y, this, CO_BADGUY);
+  World::current()->try_tile_interact(base.x, base.y + base.height, this, CO_BADGUY);
+  World::current()->try_tile_interact(base.x+31, base.y + base.height, this, CO_BADGUY);
 }
 
 void

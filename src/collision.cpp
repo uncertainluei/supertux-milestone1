@@ -176,7 +176,6 @@ void collision_swept_object_map(base_type* old, base_type* current)
           old->x += xd*16.;
           steps--;
         }
-
       if(collision_object_map(*old))
         {
           switch(h)

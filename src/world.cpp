@@ -24,6 +24,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "badguy.h"
+#include "collision.h"
 #include "globals.h"
 #include "player.h"
 #include "scene.h"
@@ -34,8 +36,6 @@
 #include "special.h"
 #include "tile.h"
 #include "resources.h"
-
-Surface* img_distro[4];
 
 World* World::current_ = 0;
 
@@ -707,23 +707,40 @@ World::tryemptybox(float x, float y, Direction col_side)
 
 /* Try to grab a distro: */
 void
-World::trygrabdistro(float x, float y, int bounciness)
+World::try_grab_coin(float x, float y)
 {
   Tile* tile = gettile(x, y);
-  if (tile && tile->distro)
-    {
-      level->change(x, y, TM_IA, tile->next_tile);
-      play_sound(SND_DISTRO);
+  if (!tile || !tile->distro) return;
 
-      if (bounciness == BOUNCE)
-        {
-          add_bouncy_distro(((int)(x + 1) / 32) * 32,
-                                  (int)(y / 32) * 32);
-        }
+  level->change(x, y, TM_IA, tile->next_tile);
+  play_sound(SND_DISTRO);
+  add_bouncy_distro((int)x/32*32, (int)y/32*32);
 
-      player_status.score = player_status.score + SCORE_DISTRO;
-      player_status.distros++;
-    }
+  player_status.score = player_status.score + SCORE_DISTRO;
+  player_status.distros++;
+}
+
+void
+World::try_tile_interact(float x, float y, void *p_c_object, int c_object)
+{
+  BadGuy* p_c_badguy;
+
+  Tile* tile = gettile(x, y);
+  if (!tile) return;
+  if (tile->distro && (c_object == CO_PLAYER || (p_c_badguy = (BadGuy*)p_c_object)->mode == BadGuy::KICK))
+    return try_grab_coin(x, y);
+
+  if (!tile->deadly) return;
+  // Deadly tile behaviour
+  if (c_object == CO_PLAYER)
+  {
+    Player* tux = (Player*)p_c_object;
+    if (!tux->safe_timer.check() && !tux->invincible_timer.check())
+      tux->kill(Player::SHRINK);
+    return; 
+  }
+  if (c_object == CO_BADGUY)
+    p_c_badguy->kill_me(0);
 }
 
 /* Try to bump a bad guy from below: */

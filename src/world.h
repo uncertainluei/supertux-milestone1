@@ -103,8 +103,9 @@ public:
   void add_upgrade(float x, float y, Direction dir, UpgradeKind kind);
   void add_bullet(float x, float y, float xm, Direction dir);
 
-  /** Try to grab the coin at the given coordinates */
-  void trygrabdistro(float x, float y, int bounciness);
+  /** Used to try to grab coins at the given coordinates */
+  void try_tile_interact(float x, float y, void *p_c_object, int c_object);
+  void try_grab_coin(float x, float y);
 
   /** Try to break the brick at the given coordinates */
   void trybreakbrick(float x, float y, bool small, Direction col_side);
