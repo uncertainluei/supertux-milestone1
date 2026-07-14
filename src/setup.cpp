@@ -421,7 +421,7 @@ void st_menu(void)
   options_menu->additem(MN_LABEL,"Options",0,0);
   options_menu->additem(MN_HL,"",0,0);
 #ifndef GP2X
-#ifndef NOOPENGL
+#if false //ndef NOOPENGL
   options_menu->additem(MN_TOGGLE,"OpenGL",use_gl,0, MNID_OPENGL);
 #else
   options_menu->additem(MN_DEACTIVE,"OpenGL (not supported)",use_gl, 0, MNID_OPENGL);
@@ -592,7 +592,7 @@ void process_options_menu(void)
       if(use_gl != options_menu->isToggled(MNID_OPENGL))
         {
           use_gl = !use_gl;
-          st_video_setup();
+          // st_video_setup();
         }
 #else
       options_menu->get_item_by_id(MNID_OPENGL).toggled = false;
@@ -1061,8 +1061,6 @@ void st_shutdown(void)
   }
 #endif
   SDL_DestroyWindow(window);
-
-  close_audio();
   SDL_Quit();
   saveconfig();
 #ifdef GP2X
