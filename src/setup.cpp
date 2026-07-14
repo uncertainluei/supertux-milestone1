@@ -17,6 +17,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+#include <SDL2/SDL_stdinc.h>
 #include <assert.h>
 #include <stdio.h>
 #include <iostream>
@@ -814,7 +815,7 @@ void st_video_setup_sdl(int wnd_x, int wnd_y)
   sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H);
 
   SDL_RenderSetLogicalSize(renderer, SCREEN_W, SCREEN_H);
-  SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
+  SDL_RenderSetIntegerScale(renderer, SDL_FALSE);
 }
 
 void st_video_setup_gl(int wnd_x, int wnd_y)
