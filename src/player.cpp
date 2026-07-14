@@ -23,7 +23,6 @@
 #include "player.h"
 #include "defines.h"
 #include "scene.h"
-#include "tile.h"
 #include "sprite.h"
 #include "screen.h"
 
@@ -341,13 +340,7 @@ Player::handle_horizontal_input()
   if(on_ground() && ((vx < 0 && dirsign >0) || (vx>0 && dirsign<0))) {
       if(fabs(vx)>SKID_XM && !skidding_timer.check()) {
           skidding_timer.start(SKID_TIME);
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_SKID], SOUND_CENTER_SPEAKER);
-#else
-	  play_chunk(SND_SKID);
-#endif
-#endif
+          play_sound(SND_SKID);
           ax *= 2.5;
       } else {
           ax *= 2;
@@ -400,22 +393,7 @@ Player::handle_vertical_input()
           --base.y;
           jumping = true;
           can_jump = false;
-          if (size == SMALL) {
-#ifndef NOSOUND
-#ifndef GP2X
-            play_sound(sounds[SND_JUMP], SOUND_CENTER_SPEAKER);
-#else
-	    play_chunk(SND_JUMP);
-#endif
-		}
-          else {
-#ifndef GP2X
-            play_sound(sounds[SND_BIGJUMP], SOUND_CENTER_SPEAKER);
-#else
-	    play_chunk(SND_BIGJUMP);
-#endif
-#endif
-          }
+          play_sound(size == SMALL ? SND_JUMP : SND_BIGJUMP);
         }
     }
   // Let go of jump key
@@ -555,13 +533,7 @@ Player::grabdistros()
       if(player_status.lives < MAX_LIVES)
         ++player_status.lives;
       /*We want to hear the sound even, if MAX_LIVES is reached*/
-#ifndef NOSOUND
-#ifndef GP2X
-      play_sound(sounds[SND_LIFEUP], SOUND_CENTER_SPEAKER);
-#else
-      play_chunk(SND_LIFEUP);
-#endif
-#endif
+      play_sound(SND_LIFEUP);
     }
 }
 
@@ -679,42 +651,12 @@ Player::collision(void* p_c_object, int c_object)
               pbad_c->mode = BadGuy::HELD;
               pbad_c->base.y-=8;
             }
-          else if (pbad_c->mode == BadGuy::FLAT)
-            {
-              // Don't get hurt if we're kicking a flat badguy!
-            }
-          else if (pbad_c->mode == BadGuy::KICK)
-            {
-              /* Hurt if you get hit by kicked laptop: */
-              if (!invincible_timer.started())
-                {
-                  kill(SHRINK);
-                }
-              else
-                {
-                   pbad_c->dying = DYING_FALLING;
-#ifndef NOSOUND
-#ifndef GP2X
-                   play_sound(sounds[SND_FALL], SOUND_CENTER_SPEAKER);
-#else
-		   play_chunk(SND_FALL);
-#endif
-#endif
-                   World::current()->add_score(pbad_c->base.x - scroll_x,
-                                               pbad_c->base.y,
-                                               25 * player_status.score_multiplier);
-                }
-            }
-          else
+          else if (pbad_c->mode != BadGuy::FLAT)
             {
               if (!invincible_timer.started())
-                {
-                  kill(SHRINK);
-                }
+                kill(SHRINK);
               else
-                {
-                  pbad_c->kill_me(25);
-                }
+                pbad_c->kill_me(25);
             }
           player_status.score_multiplier++;
         }

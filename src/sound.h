@@ -90,6 +90,8 @@ Mix_Chunk * load_sound(const std::string& file);
 #endif
 void free_chunk(Mix_Chunk*chunk);
 void play_sound(Mix_Chunk * snd, enum Sound_Speaker whichSpeaker);
+void play_sound(int snd, float sourceX);
+void play_sound(int snd);
 void sound_volume ( int vol );
 
 #endif /*SUPERTUX_SOUND_H*/

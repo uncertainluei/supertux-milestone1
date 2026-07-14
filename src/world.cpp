@@ -25,11 +25,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "globals.h"
+#include "player.h"
 #include "scene.h"
 #include "screen.h"
 #include "defines.h"
 #include "world.h"
 #include "level.h"
+#include "special.h"
 #include "tile.h"
 #include "resources.h"
 
@@ -572,13 +574,7 @@ World::add_bullet(float x, float y, float xm, Direction dir)
   Bullet new_bullet;
   new_bullet.init(x,y,xm,dir);
   bullets.push_back(new_bullet);
-#ifndef NOSOUND
-#ifndef GP2X  
-  play_sound(sounds[SND_SHOOT], SOUND_CENTER_SPEAKER);
-#else
-  play_chunk(SND_SHOOT);
-#endif
-#endif
+  play_sound(SND_SHOOT);
 }
 
 #ifndef NOSOUND
@@ -641,13 +637,7 @@ World::trybreakbrick(float x, float y, bool small, Direction col_side)
               plevel->change(x, y, TM_IA, tile->next_tile);
             }
 
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_DISTRO], SOUND_CENTER_SPEAKER);
-#else
-	  play_chunk(SND_DISTRO);
-#endif
-#endif
+          play_sound(SND_DISTRO);
           player_status.score = player_status.score + SCORE_DISTRO;
           player_status.distros++;
         }
@@ -662,13 +652,7 @@ World::trybreakbrick(float x, float y, bool small, Direction col_side)
                                  (int)(y / 32) * 32);
           
           /* Get some score: */
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_BRICK], SOUND_CENTER_SPEAKER);
-#else
-	  play_chunk(SND_BRICK);
-#endif
-#endif
+          play_sound(SND_BRICK);
           player_status.score = player_status.score + SCORE_BRICK;
         }
     }
@@ -696,32 +680,17 @@ World::tryemptybox(float x, float y, Direction col_side)
     {
     case 1: // Box with a distro!
       add_bouncy_distro(posx, posy);
-#ifndef NOSOUND
-#ifndef GP2X
-      play_sound(sounds[SND_DISTRO], SOUND_CENTER_SPEAKER);
-#else
-      play_chunk(SND_DISTRO);
-#endif
-#endif
+      play_sound(SND_DISTRO);
       player_status.score = player_status.score + SCORE_DISTRO;
       player_status.distros++;
       break;
 
     case 2: // Add an upgrade!
-      if (tux.size == SMALL)     /* Tux is small, add mints! */
-        add_upgrade(posx, posy, col_side, UPGRADE_GROWUP);
-      else     /* Tux is big, add an iceflower: */
-        add_upgrade(posx, posy, col_side, UPGRADE_FIREFLOWER);
-#ifndef NOSOUND
-#ifndef GP2X
-      play_sound(sounds[SND_UPGRADE], SOUND_CENTER_SPEAKER);
-#else
-      play_chunk(SND_UPGRADE);
-#endif
-#endif
+      add_upgrade(posx, posy, col_side, tux.size == SMALL ? UPGRADE_GROWUP : UPGRADE_FIREFLOWER); // Give egg if small, otherwise give a fire flower
+      play_sound(SND_UPGRADE);
       break;
 
-    case 3: // Add a golden herring
+    case 3: // Add a star
       add_upgrade(posx, posy, col_side, UPGRADE_HERRING);
       break;
 
@@ -744,13 +713,7 @@ World::trygrabdistro(float x, float y, int bounciness)
   if (tile && tile->distro)
     {
       level->change(x, y, TM_IA, tile->next_tile);
-#ifndef NOSOUND
-#ifndef GP2X
-      play_sound(sounds[SND_DISTRO], SOUND_CENTER_SPEAKER);
-#else
-      play_chunk(SND_DISTRO);
-#endif
-#endif
+      play_sound(SND_DISTRO);
 
       if (bounciness == BOUNCE)
         {

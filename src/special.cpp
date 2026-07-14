@@ -321,13 +321,7 @@ Upgrade::bump(Player* )
   if(kind != UPGRADE_GROWUP)
     return;
 
-#ifndef NOSOUND
-#ifndef GP2X
-  play_sound(sounds[SND_BUMP_UPGRADE], SOUND_CENTER_SPEAKER);
-#else
-    play_chunk(SND_BUMP_UPGRADE);
-#endif
-#endif
+  play_sound(SND_BUMP_UPGRADE);
   
   // do a little jump and change direction
   physic.set_velocity(-physic.get_velocity_x(), 3);
@@ -359,38 +353,20 @@ Upgrade::collision(void* p_c_object, int c_object, CollisionType type)
 
       if (kind == UPGRADE_GROWUP)
         {
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_EXCELLENT], SOUND_CENTER_SPEAKER);
-#else
-	    play_chunk(SND_EXCELLENT);
-#endif
-#endif
+          play_sound(SND_EXCELLENT);
           pplayer->grow();
         }
       else if (kind == UPGRADE_FIREFLOWER)
         {
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_COFFEE], SOUND_CENTER_SPEAKER);
-#else
-	  play_chunk(SND_COFFEE);
-#endif
-#endif
+          play_sound(SND_COFFEE);
           pplayer->grow();
           pplayer->got_coffee = true;
         }
       else if (kind == UPGRADE_HERRING)
         {
-#ifndef NOSOUND
-#ifndef GP2X
-          play_sound(sounds[SND_HERRING], SOUND_CENTER_SPEAKER);
-#else
-	  play_chunk(SND_HERRING);
-#endif
-#endif
           pplayer->invincible_timer.start(TUX_INVINCIBLE_TIME);
 #ifndef NOSOUND
+          play_sound(SND_HERRING);
           World::current()->play_music(HERRING_MUSIC);
 #endif
         }
@@ -398,14 +374,8 @@ Upgrade::collision(void* p_c_object, int c_object, CollisionType type)
         {
           if(player_status.lives < MAX_LIVES) {
             player_status.lives++;
-#ifndef NOSOUND
-#ifndef GP2X
-            play_sound(sounds[SND_LIFEUP], SOUND_CENTER_SPEAKER);
-#else
-	    play_chunk(SND_LIFEUP);
-#endif
-#endif
           }
+          play_sound(SND_LIFEUP);
         }
 
       remove_me();

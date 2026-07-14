@@ -21,12 +21,7 @@
 #include "SDL_image.h"
 #include "string.h"
 #include "stdlib.h"
-#include "setup.h"
-#include "globals.h"
-#include "screen.h"
-#include "defines.h"
 #include "type.h"
-#include "scene.h"
 
 void string_list_init(string_list_type* pstring_list)
 {

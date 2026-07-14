@@ -240,6 +240,34 @@ void play_sound(Mix_Chunk * snd, enum Sound_Speaker whichSpeaker)
   }
 }
 
+void play_sound(int snd, float sourceX)
+{
+  #ifndef NOSOUND
+  #ifndef GP2X
+    /* handle stereo sound (number 10 should be tweaked...)*/
+    if (sourceX < scroll_x + screen->w/2 - 10)
+      play_sound(sounds[snd], SOUND_LEFT_SPEAKER);
+    else if (sourceX > scroll_x + screen->w/2 + 10)
+      play_sound(sounds[snd], SOUND_RIGHT_SPEAKER);
+    else
+      play_sound(sounds[snd], SOUND_CENTER_SPEAKER);
+  #else
+    play_chunk(snd);
+  #endif
+  #endif
+}
+
+void play_sound(int snd)
+{
+  #ifndef NOSOUND
+  #ifndef GP2X
+    play_sound(sounds[snd], SOUND_CENTER_SPEAKER);
+  #else
+    play_chunk(snd);
+  #endif
+  #endif
+}
+
 #ifdef GP2X
 void play_chunk(int idx) 
 {
