@@ -57,7 +57,6 @@
 
 static Surface* bkg_title;
 static Surface* logo;
-static Surface* img_choose_subset;
 
 static bool walking;
 static Timer random_timer;
@@ -256,7 +255,6 @@ void title(void)
   /* Load images: */
   bkg_title = new Surface(datadir + "/images/title/background.jpg", IGNORE_ALPHA);
   logo = new Surface(datadir + "/images/title/logo.png", USE_ALPHA);
-  img_choose_subset = new Surface(datadir + "/images/status/choose-level-subset.png", USE_ALPHA);
 
   /* Generating contrib maps by only using a string_list */
   // Since there isn't any world dir or anything, add a hardcoded entry for Bonus Island
@@ -313,10 +311,10 @@ void title(void)
 
 	
 #ifndef RES320X240
-      white_small_text->draw(" SuperTux Milestone 1 - Luei's Fork" "\n"
-                             "Copyright (c) 2003 SuperTux Devel Team\n"
+      white_small_text->draw(" SuperTux " VERSION "\n"
+                             "Copyright (c) 2003 SuperTux Devel Team, fork by uncertain_luei\n"
                              "This game comes with ABSOLUTELY NO WARRANTY. This is free software, and you\n"
-                             "are welcome to redistribute it under certain conditions; see the file COPYING\n"
+                             "are welcome to redistribute it under certain conditions; see the file LICENSE\n"
                              "for details.\n",
                              0, 420, 0);
 #else
@@ -326,9 +324,10 @@ void title(void)
 			     "WARRANTY. This is free software, and\n"
                              "you are welcome to redistribute it\n"
 			     "under certain conditions; see the file\n"
-			     "COPYING for details.\n",
+			     "LICENSE for details.\n",
                              0, 360, 0);
 #endif
+
 #ifndef NOSOUND
 #ifdef GP2X
 	updateSound();
@@ -449,7 +448,6 @@ void title(void)
   string_list_free(&worldmap_list);
   delete bkg_title;
   delete logo;
-  delete img_choose_subset;
 }
 
 // EOF //

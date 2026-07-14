@@ -29,15 +29,6 @@ class SpriteManager;
 class MusicManager;
 #endif
 
-extern Surface* img_waves[3]; 
-extern Surface* img_water;
-extern Surface* img_pole;
-extern Surface* img_poletop;
-extern Surface* img_flag[2];
-extern Surface* img_cloud[2][4];
-
-extern Surface* img_super_bkgd;
-
 #ifndef NOSOUND
 extern MusicRef herring_song;
 extern MusicRef level_end_song;

@@ -681,7 +681,6 @@ void st_general_setup(void)
   white_text  = new Text(datadir + "/images/status/letters-white.png", TEXT_TEXT, 16,18);
   white_small_text = new Text(datadir + "/images/status/letters-white-small.png", TEXT_TEXT, 8,9);
   white_big_text   = new Text(datadir + "/images/status/letters-white-big.png", TEXT_TEXT, 20,22);
-  yellow_nums = new Text(datadir + "/images/status/numbers.png", TEXT_NUM, 32,32);
 
   /* Load GUI/menu images: */
   checkbox = new Surface(datadir + "/images/status/checkbox.png", USE_ALPHA);
@@ -709,7 +708,6 @@ void st_general_free(void)
   delete green_text;
   delete white_small_text;
   delete white_big_text;
-  delete yellow_nums;
 
   /* Free GUI/menu images: */
   delete checkbox;

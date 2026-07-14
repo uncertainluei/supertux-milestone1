@@ -92,7 +92,6 @@ extern Text* white_big_text;
 extern Text* blue_text;
 extern Text* red_text;
 extern Text* green_text;
-extern Text* yellow_nums;
 
 extern MouseCursor * mouse_cursor;
 
