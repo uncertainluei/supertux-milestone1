@@ -112,6 +112,7 @@ private:
   bool bumpable;
   bool invulnerable;
   bool turn_when_bumped;
+  bool check_tiles;
 
 public:
   BadGuy(float x, float y, BadGuyKind kind, bool stay_on_platform);
@@ -168,6 +169,10 @@ private:
    * direction
    */
   void check_horizontal_bump(bool checkcliff = false);
+
+  // Check what tiles the enemy is colliding
+  void check_current_tiles();
+
   /** called when we're bumped from below with a block */
   void bump();
   /** called when a player jumped on the badguy from above */

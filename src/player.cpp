@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <math.h>
+#include "collision.h"
 #include "gameloop.h"
 #include "globals.h"
 #include "player.h"
@@ -226,7 +227,7 @@ Player::action(double frame_ratio)
           if (isbrick(base.x, base.y) ||
               isfullbox(base.x, base.y))
             {
-              World::current()->trygrabdistro(base.x, base.y - 32,BOUNCE);
+              World::current()->try_grab_coin(base.x, base.y - 32);
               World::current()->trybumpbadguy(base.x, base.y - 64);
 
               World::current()->trybreakbrick(base.x, base.y, size == SMALL, RIGHT);
@@ -238,7 +239,7 @@ Player::action(double frame_ratio)
           if (isbrick(base.x+ 31, base.y) ||
               isfullbox(base.x+ 31, base.y))
             {
-              World::current()->trygrabdistro(base.x+ 31, base.y - 32,BOUNCE);
+              World::current()->try_grab_coin(base.x+ 31, base.y - 32);
               World::current()->trybumpbadguy(base.x+ 31, base.y - 64);
 
               if(size == BIG)
@@ -512,16 +513,16 @@ Player::grabdistros()
   /* Grab distros: */
   if (!dying)
     {
-      World::current()->trygrabdistro(base.x, base.y, NO_BOUNCE);
-      World::current()->trygrabdistro(base.x+ 31, base.y, NO_BOUNCE);
+      World::current()->try_tile_interact(base.x, base.y, this, CO_PLAYER);
+      World::current()->try_tile_interact(base.x+ 31, base.y, this, CO_PLAYER);
 
-      World::current()->trygrabdistro(base.x, base.y + base.height, NO_BOUNCE);
-      World::current()->trygrabdistro(base.x+ 31, base.y + base.height, NO_BOUNCE);
+      World::current()->try_tile_interact(base.x, base.y + base.height, this, CO_PLAYER);
+      World::current()->try_tile_interact(base.x+ 31, base.y + base.height, this, CO_PLAYER);
 
       if(size == BIG)
         {
-          World::current()->trygrabdistro(base.x, base.y + base.height / 2, NO_BOUNCE);
-          World::current()->trygrabdistro(base.x+ 31, base.y + base.height / 2, NO_BOUNCE);
+          World::current()->try_tile_interact(base.x, base.y + base.height / 2, this, CO_PLAYER);
+          World::current()->try_tile_interact(base.x+ 31, base.y + base.height / 2, this, CO_PLAYER);
         }
 
     }
