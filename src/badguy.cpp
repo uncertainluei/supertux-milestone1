@@ -380,53 +380,49 @@ void
 BadGuy::fall()
 {
   /* Fall if we get off the ground: */
-  if (dying != DYING_FALLING)
-    {
-      if (!issolid(base.x+base.width/2, base.y + base.height))
-        {
-          // not solid below us? enable gravity
-          physic.enable_gravity(true);
+  if (dying == DYING_FALLING)
+  {
+    physic.enable_gravity(true);
+    return;
+  }
+  if (!issolid(base.x+base.width/2, base.y + base.height))
+  {
+    // not solid below us? enable gravity
+    physic.enable_gravity(true);
 
-          if (issolid(base.x+base.width/2, base.y-1) && physic.get_velocity_y() > 0)
-          {
-            base.y = int((base.y - 1)/32) * 32 + base.height;
-            physic.set_velocity_y(0);
-          }
-        }
+    if (issolid(base.x+base.width/2, base.y-1) && physic.get_velocity_y() > 0)
+    {
+      base.y = int((base.y - 1)/32) * 32 + base.height;
+      physic.set_velocity_y(0);
+    }
+    return;
+  }
+  /* Land: */
+  if (physic.get_velocity_y() < 0)
+    {
+      base.y = int((base.y + base.height)/32) * 32 - base.height;
+      physic.set_velocity_y(0);
+    }
+  // no gravity anymore please
+  physic.enable_gravity(false);
+
+  if (stay_on_platform && mode == NORMAL)
+  {
+    if (!issolid(base.x + ((dir == LEFT) ? 0 : base.width),
+                  base.y + base.height))
+    {
+      if (dir == LEFT)
+      {
+        dir = RIGHT;
+        physic.set_velocity_x(fabsf(physic.get_velocity_x()));
+      } 
       else
-        {
-          /* Land: */
-          if (physic.get_velocity_y() < 0)
-            {
-              base.y = int((base.y + base.height)/32) * 32 - base.height;
-              physic.set_velocity_y(0);
-            }
-          // no gravity anymore please
-          physic.enable_gravity(false);
-
-          if (stay_on_platform && mode == NORMAL)
-            {
-              if (!issolid(base.x + ((dir == LEFT) ? 0 : base.width),
-                           base.y + base.height))
-                {
-                  if (dir == LEFT)
-                  {
-                    dir = RIGHT;
-                    physic.set_velocity_x(fabsf(physic.get_velocity_x()));
-                  } 
-                  else
-                  {
-                    dir = LEFT;
-                    physic.set_velocity_x(-fabsf(physic.get_velocity_x()));
-                  }
-                }
-            }
-        }
+      {
+        dir = LEFT;
+        physic.set_velocity_x(-fabsf(physic.get_velocity_x()));
+      }
     }
-  else
-    {
-      physic.enable_gravity(true);
-    }
+  }
 }
 
 void
@@ -453,18 +449,13 @@ BadGuy::action_jumpy(double frame_ratio)
   static const float JUMPV = 6;
     
   fall();
-  // jump when on ground
-  if(dying == DYING_NOT && issolid(base.x, base.y+32))
-    {
-      physic.set_velocity_y(JUMPV);
-      physic.enable_gravity(true);
-
-      mode = JUMPY_JUMP;
-    }
-  else if(mode == JUMPY_JUMP)
-    {
-      mode = NORMAL;
-    }
+  mode = NORMAL;
+  if(issolid(base.x, base.y+32)) // jump when on ground
+  {
+    physic.set_velocity_y(JUMPV);
+    physic.enable_gravity(true);
+    mode = JUMPY_JUMP;
+  }
 
   // set direction based on tux
   if(tux.base.x > base.x)
@@ -474,41 +465,39 @@ BadGuy::action_jumpy(double frame_ratio)
 
   // move
   physic.apply(frame_ratio, base.x, base.y);
-  if(dying == DYING_NOT)
-    collision_swept_object_map(&old_base, &base);
+  collision_swept_object_map(&old_base, &base);
 }
 
 void
 BadGuy::action_mrbomb(double frame_ratio)
 {
-  if (dying == DYING_NOT)
-    check_horizontal_bump(true);
-
+  check_horizontal_bump(true);
   fall();
-
   physic.apply(frame_ratio, base.x, base.y);
-  if (dying != DYING_FALLING)
-    collision_swept_object_map(&old_base,&base); 
+  collision_swept_object_map(&old_base,&base); 
 }
 
 void
 BadGuy::action_bomb(double frame_ratio)
 {
   static const int TICKINGTIME = 1000;
-    
-  fall();
-
-  if(mode == NORMAL) {
+  
+  if (mode == NORMAL)
+  {
     mode = BOMB_TICKING;
     timer.start(TICKINGTIME);
-  } else if(!timer.check()) {
-    if(mode == BOMB_TICKING) {
-      explode_bomb();
-    } else if(mode == BOMB_EXPLODE) {
-      remove_me();
-      return;
-    }
   }
+  if (mode == BOMB_EXPLODE) // If exploding, then do not fall!
+  {
+    if (!timer.check())
+      remove_me();
+    return;
+  }
+  if (mode == BOMB_TICKING && !timer.check())
+    explode_bomb();
+
+  fall();
+
 
   // move
   physic.apply(frame_ratio, base.x, base.y);                 
@@ -535,38 +524,34 @@ BadGuy::action_stalactite(double frame_ratio)
 
   static const int RANGE = 40;
     
-  if(mode == NORMAL) {
+  if (mode == NORMAL) 
+  {
     // start shaking when tux is below the stalactite and at least 40 pixels
     // near
     if(tux.base.x + 32 > base.x - RANGE && tux.base.x < base.x + 32 + RANGE
-            && tux.base.y + tux.base.height > base.y) {
+            && tux.base.y + tux.base.height > base.y)
       crack_stalactite();
-    }
-  } if(mode == STALACTITE_SHAKING) {
+    return;
+  }
+  if (mode == STALACTITE_SHAKING)
+  {
     base.x = old_base.x + (rand() % 6) - 3; // TODO this could be done nicer...
-    if(!timer.check()) {
+    if(!timer.check())
       mode = STALACTITE_FALL;
-    }
-  } else if(mode == STALACTITE_FALL) {
-    fall();
-    /* Destroy if we collides with land */
-    if(issolid(base.x+base.width/2, base.y+base.height))
-    {
-      timer.start(2000);
-      dying = DYING_SQUISHED;
-      mode = FLAT;
-      set_sprite(img_stalactite_broken, img_stalactite_broken);
-      play_sound(SND_STALACTITE_CRASH, base.x);
-    }
-  } else if(mode == FLAT) {
-    fall();
+    return;
+  }
+  fall();
+  if (mode == STALACTITE_FALL && issolid(base.x+base.width/2, base.y+base.height)) // Destroy if we collides with land
+  {
+    timer.start(2000);
+    dying = DYING_SQUISHED;
+    mode = FLAT;
+    set_sprite(img_stalactite_broken, img_stalactite_broken);
+    play_sound(SND_STALACTITE_CRASH, base.x);
   }
 
   // move
   physic.apply(frame_ratio, base.x, base.y);
-
-  if(dying == DYING_SQUISHED && !timer.check())
-    remove_me();
 }
 
 void
@@ -595,33 +580,29 @@ BadGuy::action_fish(double frame_ratio)
   static const float JUMPV = 6;
   static const int WAITTIME = 1000;
   
-  if(dying == DYING_NOT)
+  // go in wait mode when back in water
+  if(gettile(base.x, base.y+ base.height)->water
+        && physic.get_velocity_y() <= 0 && mode == NORMAL)
   {
-    // go in wait mode when back in water
-    if(gettile(base.x, base.y+ base.height)->water
-          && physic.get_velocity_y() <= 0 && mode == NORMAL)
-    {
-      mode = FISH_WAIT;
-      set_sprite(0, 0);
-      physic.set_velocity(0, 0);
-      physic.enable_gravity(false);
-      timer.start(WAITTIME);
-      disable_collision = true;
-    }
-    else if(mode == FISH_WAIT && !timer.check())
-    {
-      // jump again
-      set_sprite(img_fish, img_fish);
-      mode = NORMAL;
-      physic.set_velocity(0, JUMPV);
-      physic.enable_gravity(true);
-      disable_collision = false;
-    }
+    mode = FISH_WAIT;
+    set_sprite(0, 0);
+    physic.set_velocity(0, 0);
+    physic.enable_gravity(false);
+    timer.start(WAITTIME);
+    disable_collision = true;
+  }
+  else if(mode == FISH_WAIT && !timer.check())
+  {
+    // jump again
+    set_sprite(img_fish, img_fish);
+    mode = NORMAL;
+    physic.set_velocity(0, JUMPV);
+    physic.enable_gravity(true);
+    disable_collision = false;
   }
 
   physic.apply(frame_ratio, base.x, base.y);
-  if(dying == DYING_NOT)
-    collision_swept_object_map(&old_base, &base);
+  collision_swept_object_map(&old_base, &base);
 
   if(physic.get_velocity_y() < 0)
     set_sprite(img_fish_down, img_fish_down);
@@ -634,33 +615,30 @@ BadGuy::action_lavaball(double frame_ratio)
   static const int WAITTIME = 1000;
     
   // go in wait mode when back in water
-  if (dying == DYING_NOT)
+  if(gettile(base.x, base.y+ base.height)->water
+        && physic.get_velocity_y() <= 0 && mode == NORMAL)
   {
-    if(gettile(base.x, base.y+ base.height)->water
-          && physic.get_velocity_y() <= 0 && mode == NORMAL)
-    {
-      mode = FISH_WAIT;
-      set_sprite(0, 0);
-      physic.set_velocity(0, 0);
-      physic.enable_gravity(false);
-      timer.start(WAITTIME);
-      disable_collision = true;
-    }
-    else if(mode == FISH_WAIT && !timer.check())
-    {
-      // jump again
-      set_sprite(img_lavaball, img_lavaball);
-      mode = NORMAL;
-      float height = base.y-base.ym;
-      if (height <= 16)
-        height = JUMPV;
-      else
-        height = sqrt(height/World::current()->get_level()->gravity)*1.5f;
+    mode = FISH_WAIT;
+    set_sprite(0, 0);
+    physic.set_velocity(0, 0);
+    physic.enable_gravity(false);
+    timer.start(WAITTIME);
+    disable_collision = true;
+  }
+  else if(mode == FISH_WAIT && !timer.check())
+  {
+    // jump again
+    set_sprite(img_lavaball, img_lavaball);
+    mode = NORMAL;
+    float height = base.y-base.ym;
+    if (height <= 16)
+      height = JUMPV;
+    else
+      height = sqrt(height/World::current()->get_level()->gravity)*1.5f;
 
-      physic.set_velocity(0, height);
-      physic.enable_gravity(true);
-      disable_collision = false;
-    }
+    physic.set_velocity(0, height);
+    physic.enable_gravity(true);
+    disable_collision = false;
   }
 
   physic.apply(frame_ratio, base.x, base.y);
@@ -676,30 +654,18 @@ BadGuy::action_bouncingsnowball(double frame_ratio)
   fall();
 
   // jump when on ground
-  if(dying == DYING_NOT && issolid(base.x, base.y+32))
+  mode = NORMAL;
+  if(issolid(base.x, base.y+32))
     {
       physic.set_velocity_y(JUMPV);
       physic.enable_gravity(true);
-    }                                                     
-  else
-    {
-      mode = NORMAL;
     }
 
   // check for right/left collisions
   check_horizontal_bump();
 
   physic.apply(frame_ratio, base.x, base.y);
-  if(dying == DYING_NOT)
-    collision_swept_object_map(&old_base, &base);
-
-  // Handle dying timer:
-  if (dying == DYING_SQUISHED && !timer.check())
-    {
-      /* Remove it if time's up: */
-      remove_me();
-      return;
-    }
+  collision_swept_object_map(&old_base, &base);
 }
 
 void
@@ -707,7 +673,7 @@ BadGuy::action_flyingsnowball(double frame_ratio)
 {
   static const float FLYINGSPEED = 1;
   static const int DIRCHANGETIME = 1000;
-   
+
   // set direction based on Tux
   Player& tux = *World::current()->get_tux();  
   if(tux.base.x > base.x)
@@ -715,46 +681,35 @@ BadGuy::action_flyingsnowball(double frame_ratio)
   else
     dir = LEFT;
 
-  // go into flyup mode if none specified yet
-  if(dying == DYING_NOT && mode == NORMAL) {
+  if (mode == NORMAL)
+  {
     mode = FLY_UP;
     physic.set_velocity_y(FLYINGSPEED);
     timer.start(DIRCHANGETIME/2);
   }
-
-  if(dying == DYING_NOT && !timer.check()) {
-    if(mode == FLY_UP) {
+  if (!timer.check())
+  {
+    if (mode == FLY_UP)
+    {
       mode = FLY_DOWN;
       physic.set_velocity_y(-FLYINGSPEED);
-    } else if(mode == FLY_DOWN) {
+    }
+    else
+    {
       mode = FLY_UP;
       physic.set_velocity_y(FLYINGSPEED);
     }
     timer.start(DIRCHANGETIME);
   }
 
-  if(dying != DYING_NOT)
-    physic.enable_gravity(true);
-
   physic.apply(frame_ratio, base.x, base.y);
-  if(dying == DYING_NOT || dying == DYING_SQUISHED)
-    collision_swept_object_map(&old_base, &base);
-
-  // Handle dying timer:
-  if (dying == DYING_SQUISHED && !timer.check())
-    {
-      /* Remove it if time's up: */
-      remove_me();
-      return;
-    }                                                          
+  collision_swept_object_map(&old_base, &base);                                                  
 }
 
 void
 BadGuy::action_spiky(double frame_ratio)
 {
-  if (dying == DYING_NOT)
-    check_horizontal_bump();
-
+  check_horizontal_bump();
   fall();
 #if 0
   // jump when we're about to fall
@@ -766,29 +721,35 @@ BadGuy::action_spiky(double frame_ratio)
 #endif
 
   physic.apply(frame_ratio, base.x, base.y);
-  if (dying != DYING_FALLING)
-    collision_swept_object_map(&old_base,&base);   
+  collision_swept_object_map(&old_base,&base);   
 }
 
 void
 BadGuy::action_snowball(double frame_ratio)
 {
-  if (dying == DYING_NOT)
-    check_horizontal_bump();
-
+  check_horizontal_bump();
   fall();
-
   physic.apply(frame_ratio, base.x, base.y);
-  if (dying != DYING_FALLING)
-    collision_swept_object_map(&old_base,&base);
+  collision_swept_object_map(&old_base,&base);
+}
 
-  // Handle dying timer:
-  if (dying == DYING_SQUISHED && !timer.check())
-    {
-      /* Remove it if time's up: */
+void
+BadGuy::action_dead_squished(double frame_ratio)
+{
+  physic.enable_gravity(true);
+  physic.apply(frame_ratio, base.x, base.y);
+  collision_swept_object_map(&old_base, &base);
+
+  // Remove it if time's up
+  if (!timer.check())
       remove_me();
-      return;
-    }
+}
+
+void
+BadGuy::action_dead_falling(double frame_ratio)
+{
+  physic.enable_gravity(true);
+  physic.apply(frame_ratio, base.x, base.y);
 }
 
 void
@@ -822,58 +783,45 @@ BadGuy::action(double frame_ratio)
   if(!seen)
     return;
 
-  switch (kind)
-    {
-    case BAD_MRICEBLOCK:
-      action_mriceblock(frame_ratio);
-      break;
-  
-    case BAD_JUMPY:
-      action_jumpy(frame_ratio);
-      break;
-
-    case BAD_MRBOMB:
-      action_mrbomb(frame_ratio);
-      break;
-    
-    case BAD_BOMB:
-      action_bomb(frame_ratio);
-      break;
-
-    case BAD_STALACTITE:
-      action_stalactite(frame_ratio);
-      break;
-
-    case BAD_FLAME:
-      action_flame(frame_ratio);
-      break;
-
-    case BAD_FISH:
-      action_fish(frame_ratio);
-      break;
-
-    case BAD_LAVABALL:
-      action_lavaball(frame_ratio);
-      break;
-
-    case BAD_BOUNCINGSNOWBALL:
-      action_bouncingsnowball(frame_ratio);
-      break;
-
-    case BAD_FLYINGSNOWBALL:
-      action_flyingsnowball(frame_ratio);
-      break;
-
-    case BAD_SPIKY:
-      action_spiky(frame_ratio);
-      break;
-
-    case BAD_SNOWBALL:
-      action_snowball(frame_ratio);
-      break;
+  // If they're dead, override their action
+  switch (dying) {
+    case DYING_NOT:
     default:
       break;
-    }
+    case DYING_FALLING:
+      return action_dead_falling(frame_ratio);
+    case DYING_SQUISHED:
+      return action_dead_squished(frame_ratio);
+  }
+
+  switch (kind) {
+    case BAD_MRICEBLOCK:
+      return action_mriceblock(frame_ratio);
+    case BAD_JUMPY:
+      return action_jumpy(frame_ratio);
+    case BAD_MRBOMB:
+      return action_mrbomb(frame_ratio);
+    case BAD_BOMB:
+      return action_bomb(frame_ratio);
+    case BAD_STALACTITE:
+      return action_stalactite(frame_ratio);
+    case BAD_FLAME:
+      return action_flame(frame_ratio);
+    case BAD_FISH:
+      return action_fish(frame_ratio);
+    case BAD_LAVABALL:
+      return action_lavaball(frame_ratio);
+    case BAD_BOUNCINGSNOWBALL:
+      return action_bouncingsnowball(frame_ratio);
+    case BAD_FLYINGSNOWBALL:
+      return action_flyingsnowball(frame_ratio);
+    case BAD_SPIKY:
+      return action_spiky(frame_ratio);
+    case BAD_SNOWBALL:
+      return action_snowball(frame_ratio);
+    default:
+      return;
+  }
 }
 
 void
@@ -1153,13 +1101,13 @@ BadGuy::collision(void *p_c_object, int c_object, CollisionType type)
         }
 
       /* Kill badguys that run into exploding bomb */
-      else if (kind == BAD_BOMB && dying == DYING_NOT)
+      else if (kind == BAD_BOMB && !disable_collision)
       {
         pbad_c->kill_me(50);
       }
 
       /* Kill any badguys that get hit by stalactite */
-      else if (kind == BAD_STALACTITE && dying == DYING_NOT)
+      else if (kind == BAD_STALACTITE && !disable_collision)
       {
         pbad_c->kill_me(50);
       }
