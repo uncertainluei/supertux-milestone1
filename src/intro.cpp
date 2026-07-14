@@ -17,11 +17,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <errno.h>
 #include <unistd.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -37,6 +33,6 @@ void draw_intro()
 {
 if(debug_mode)
   fade("/images/background/arctis2.jpg", 30, false);
-display_text_file("intro.txt", "/images/background/arctis2.jpg", SCROLL_SPEED_MESSAGE);
+  display_text_file("intro.txt", "/images/background/arctis2.jpg", SCROLL_SPEED_MESSAGE);
 }
 
