@@ -153,6 +153,9 @@ private:
   std::string name;
   std::string music;
 
+  /** Filename of the intro text to show when the player first enters the worldmap **/
+  std::string intro_filename;
+
   std::vector<int> tilemap;
   int width;
   int height;
@@ -251,8 +254,9 @@ public:
   bool path_ok(Direction direction, Point pos, Point* new_pos);
 
   void savegame(const std::string& filename);
-  void loadgame(const std::string& filename);
+  bool loadgame(const std::string& filename);
   void loadmap(const std::string& filename);
+  void display_intro();
 
   const std::string& get_world_title() const
     { return name; }

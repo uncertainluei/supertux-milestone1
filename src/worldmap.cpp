@@ -23,6 +23,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include "globals.h"
+#include "text.h"
 #include "texture.h"
 #include "screen.h"
 #include "lispreader.h"
@@ -395,6 +396,7 @@ WorldMap::WorldMap()
   enter_level = false;
 
   name = "<no file>";
+  intro_filename = "";
   music = "salcon.mod";
 }
 
@@ -442,6 +444,7 @@ WorldMap::load_map()
               LispReader reader(lisp_cdr(element));
               reader.read_string("name",  &name);
               reader.read_string("music", &music);
+              reader.read_string("intro-filename", &intro_filename);
    	      reader.read_int("start_pos_x", &start_x);
 	      reader.read_int("start_pos_y", &start_y);
             }
@@ -506,7 +509,7 @@ WorldMap::load_map()
         }
     }
 
-    lisp_free(root_obj);   
+    lisp_free(root_obj);
     tux = new Tux(this);
 }
 
@@ -1137,26 +1140,28 @@ WorldMap::savegame(const std::string& filename)
       << " )\n\n;; EOF ;;" << std::endl;
 }
 
-void
+bool
 WorldMap::loadgame(const std::string& filename)
 {
   std::cout << "loadgame: " << filename << std::endl;
   savegame_file = filename;
 
   if (access(filename.c_str(), F_OK) != 0)
-    return;
+  {
+    return false;
+  }
   
   lisp_object_t* savegame = lisp_read_from_file(filename);
   if (!savegame)
     {
       std::cout << "WorldMap:loadgame: File not found: " << filename << std::endl;
-      return;
+      return false;
     }
 
   lisp_object_t* cur = savegame;
 
   if (strcmp(lisp_symbol(lisp_car(cur)), "supertux-savegame") != 0)
-    return;
+    return false;
 
   cur = lisp_cdr(cur);
   LispReader reader(cur);
@@ -1215,6 +1220,7 @@ WorldMap::loadgame(const std::string& filename)
     }
  
   lisp_free(savegame);
+  return true;
 }
 
 void
@@ -1223,6 +1229,14 @@ WorldMap::loadmap(const std::string& filename)
   savegame_file = "";
   set_map_file(filename);
   load_map();
+}
+
+void
+WorldMap::display_intro()
+{
+  // Display intro, assuming this is the first time!
+  if (!intro_filename.empty())
+    display_text_file(intro_filename, "/images/background/arctis2.jpg", SCROLL_SPEED_MESSAGE);
 }
 
 } // namespace WorldMapNS

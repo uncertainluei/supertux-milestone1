@@ -157,7 +157,8 @@ void check_contrib_menu()
       savegame = savegame.substr(0, savegame.size()-5);
       savegame = std::string(st_save_dir) + "/" + savegame + ".stsg";
       std::cout << "SaveGameName: " << savegame << "\n";
-      worldmap.loadgame(savegame.c_str());
+      if (!worldmap.loadgame(savegame.c_str()))
+        worldmap.display_intro();
 
       worldmap.display();
 
