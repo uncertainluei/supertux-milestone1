@@ -21,12 +21,15 @@
 #define HEADER_SPRITE_MANAGER_HXX
 
 #include <map>
+#include "lispreader.h"
 #include "sprite.h"
 
 class SpriteManager
 {
  private:
   typedef std::map<std::string, Sprite*> Sprites;
+  void add(Sprite* sprite);
+  void try_make_copies(Sprite* sprite, LispReader& reader);
   Sprites sprites;
  public:
   SpriteManager(const std::string& filename);

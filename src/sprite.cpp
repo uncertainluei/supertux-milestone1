@@ -24,14 +24,16 @@
 #include "sprite.h"
 #include "setup.h"
 
-Sprite::Sprite(lisp_object_t* cur)
+Sprite::Sprite()
 {
   init_defaults();
+}
 
-  LispReader reader(cur);
-
+Sprite::Sprite(LispReader& reader) : Sprite::Sprite()
+{
   if(!reader.read_string("name",   &name))
-    st_abort("Sprite wihtout name", "");
+    st_abort("Sprite without name", "");
+
   reader.read_int("x-hotspot", &x_hotspot);
   reader.read_int("y-hotspot", &y_hotspot);
   reader.read_float("fps",     &fps);
@@ -51,9 +53,23 @@ Sprite::Sprite(lisp_object_t* cur)
     {
       surfaces.push_back(
           new Surface(datadir + "/images/" + images[i], USE_ALPHA));
-    }        
+    }
 
   frame_delay = 1000.0f/fps;
+}
+
+void
+Sprite::copy(std::string name, Sprite* sprite_to_copy, SDL_RendererFlip flip_params)
+{
+  this->name = name;
+  x_hotspot = sprite_to_copy->x_hotspot;
+  y_hotspot = sprite_to_copy->y_hotspot;
+  frame_delay = sprite_to_copy->frame_delay;
+
+  for(std::vector<Surface*>::size_type i = 0; i < sprite_to_copy->surfaces.size(); ++i)
+    surfaces.push_back(sprite_to_copy->surfaces[i]);
+
+  flip_mode = (SDL_RendererFlip)(sprite_to_copy->flip_mode|flip_params);
 }
 
 Sprite::~Sprite()

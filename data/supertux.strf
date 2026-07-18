@@ -5,268 +5,170 @@
          (fps 15.0)
          (x-hotspot 5)
          (y-hotspot 9)
-         (images "shared/smalltux-left-1.png"
-                 "shared/smalltux-left-2.png"
-                 "shared/smalltux-left-3.png"
-                 "shared/smalltux-left-4.png"
-                 "shared/smalltux-left-5.png"
-                 "shared/smalltux-left-6.png"
-                 "shared/smalltux-left-7.png"
-                 "shared/smalltux-left-8.png"))
-
- (sprite (name "smalltux-walk-right")
-         (fps 15.0)
-         (x-hotspot 5)
-         (y-hotspot 9)
-         (images "shared/smalltux-right-1.png"
-                 "shared/smalltux-right-2.png"
-                 "shared/smalltux-right-3.png"
-                 "shared/smalltux-right-4.png"
-                 "shared/smalltux-right-5.png"
-                 "shared/smalltux-right-6.png"
-                 "shared/smalltux-right-7.png"
-                 "shared/smalltux-right-8.png"))
+         (images "shared/tux/small/walk-0.png"
+                 "shared/tux/small/walk-1.png"
+                 "shared/tux/small/walk-2.png"
+                 "shared/tux/small/walk-3.png"
+                 "shared/tux/small/walk-4.png"
+                 "shared/tux/small/walk-5.png"
+                 "shared/tux/small/walk-6.png"
+                 "shared/tux/small/walk-7.png")
+         (mirror-as "smalltux-walk-right"))
 
  ;; Small Tux Stand
  (sprite (name "smalltux-stand-left")
          (fps 15.0)
          (x-hotspot 5)
          (y-hotspot 9)
-         (images "shared/smalltux-left-6.png"
-                 ))
-
- (sprite (name "smalltux-stand-right")
-         (fps 15.0)
-         (x-hotspot 5)
-         (y-hotspot 9)
-         (images "shared/smalltux-right-6.png"))
+         (images "shared/tux/small/stand.png")
+         (mirror-as "smalltux-stand-right"))
 
  ;; Small Tux Jump
  (sprite (name "smalltux-jump-left")
          (fps 15.0)
          (x-hotspot 5)
          (y-hotspot 7)
-         (images "shared/smalltux-jump-left.png"
-                 ))
-
- (sprite (name "smalltux-jump-right")
-         (fps 15.0)
-         (x-hotspot 5)
-         (y-hotspot 7)
-         (images "shared/smalltux-jump-right.png"))
+         (images "shared/tux/small/jump.png")
+         (mirror-as "smalltux-jump-right"))
 
  (sprite (name "smalltux-gameover")
          (fps 10.0)
          (x-hotspot 13)
          (y-hotspot 6)
-         (images "shared/smalltux-gameover-0.png"
-                 "shared/smalltux-gameover-1.png"))
+         (images "shared/tux/dead-0.png"
+                 "shared/tux/dead-1.png"))
 
  (sprite (name "smalltux-skid-left")
          (x-hotspot 6)
          (y-hotspot 8)
-         (images "shared/smalltux-skid-left.png"))
-
- (sprite (name "smalltux-skid-right")
-         (x-hotspot 6)
-         (y-hotspot 8)
-         (images "shared/smalltux-skid-right.png"))
+         (images "shared/tux/small/skid.png")
+         (mirror-as "smalltux-skid-right"))
 
  (sprite (name "smalltux-kick-left")
          (x-hotspot 5)
          (y-hotspot 9)
-         (images "shared/smalltux-kick-left-0.png"))
-
- (sprite (name "smalltux-kick-right")
-         (x-hotspot 5)
-         (y-hotspot 9)
-         (images "shared/smalltux-kick-right-0.png"))
+         (images "shared/tux/small/kick.png")
+         (mirror-as "smalltux-kick-right"))
 
  (sprite (name "smalltux-grab-left")
          (x-hotspot 5)
          (y-hotspot 9)
-         (images "shared/smalltux-grab-left-0.png"))
-
- (sprite (name "smalltux-grab-right")
-         (x-hotspot 5)
-         (y-hotspot 9)
-         (images "shared/smalltux-grab-right-0.png"))
+         (images "shared/tux/small/grab.png")
+         (mirror-as "smalltux-grab-right"))
 
  (sprite (name "smalltux-star")
          (x-hotspot 5)
          (y-hotspot 15)
-         (images "shared/smalltux-star-0.png"
-                 "shared/smalltux-star-1.png"
-                 "shared/smalltux-star-2.png"
+         (images "shared/tux/small/star-0.png"
+                 "shared/tux/small/star-1.png"
+                 "shared/tux/small/star-2.png"
                  ))
 
  ;; Large Tux Walk
  (sprite (name "largetux-walk-left")
          (x-hotspot 6)
          (y-hotspot 2)
-         (images "shared/largetux-walk-left-0.png"
-                 "shared/largetux-walk-left-1.png"
-                 "shared/largetux-walk-left-2.png"
-                 "shared/largetux-walk-left-3.png"
-                 "shared/largetux-walk-left-4.png"
-                 "shared/largetux-walk-left-5.png"))
-
- (sprite (name "largetux-walk-right")
-         (x-hotspot 6)
-         (y-hotspot 2)
-         (images "shared/largetux-walk-right-0.png"
-                 "shared/largetux-walk-right-1.png"
-                 "shared/largetux-walk-right-2.png"
-                 "shared/largetux-walk-right-3.png"
-                 "shared/largetux-walk-right-4.png"
-                 "shared/largetux-walk-right-5.png"))
-
- (sprite (name "largetux-skid-right")
-         (x-hotspot 8)
-         (y-hotspot 3)
-         (images "shared/largetux-skid-right.png"))
+         (images "shared/tux/big/walk-0.png"
+                 "shared/tux/big/walk-1.png"
+                 "shared/tux/big/walk-2.png"
+                 "shared/tux/big/walk-3.png"
+                 "shared/tux/big/walk-4.png"
+                 "shared/tux/big/walk-5.png")
+         (mirror-as "largetux-walk-right"))
 
  (sprite (name "largetux-skid-left")
          (x-hotspot 8)
          (y-hotspot 3)
-         (images "shared/largetux-skid-left.png"))
+         (images "shared/tux/big/skid.png")
+         (mirror-as "largetux-skid-right"))
         
  (sprite (name "largetux-stand-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/largetux-stand-left.png"))
-
- (sprite (name "largetux-stand-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/largetux-stand-right.png"))
+         (images "shared/tux/big/stand.png")
+         (mirror-as "largetux-stand-right"))
 
  (sprite (name "largetux-jump-left")
          (x-hotspot 9)
          (y-hotspot 2)
-         (images "shared/largetux-jump-left-0.png"))
- (sprite (name "largetux-jump-right")
-         (x-hotspot 9)
-         (y-hotspot 2)
-         (images "shared/largetux-jump-right-0.png"))
+         (images "shared/tux/big/jump.png")
+         (mirror-as "largetux-jump-right"))
+
 
  (sprite (name "largetux-duck-left")
          (x-hotspot 6)
          (y-hotspot 6)
-         (images "shared/tux-duck-left.png"))
- (sprite (name "largetux-duck-right")
-         (x-hotspot 6)
-         (y-hotspot 6)
-         (images "shared/tux-duck-right.png"))
+         (images "shared/tux/big/duck.png")
+         (mirror-as "largetux-duck-right"))
 
 
  (sprite (name "largetux-kick-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/largetux-kick-left-0.png"))
-
- (sprite (name "largetux-kick-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/largetux-kick-right-0.png"))
+         (images "shared/tux/big/kick.png")
+         (mirror-as "largetux-kick-right"))
 
  (sprite (name "largetux-grab-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/largetux-grab-left-0.png"))
-
- (sprite (name "largetux-grab-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/largetux-grab-right-0.png"))
+         (images "shared/tux/big/grab.png")
+         (mirror-as "largetux-grab-right"))
 
  (sprite (name "largetux-star")
          (x-hotspot 8)
          (y-hotspot 8)
-         (images "shared/largetux-star-0.png"
-                 "shared/largetux-star-1.png"
-                 "shared/largetux-star-2.png"
+         (images "shared/tux/big/star-0.png"
+                 "shared/tux/big/star-1.png"
+                 "shared/tux/big/star-2.png"
                  ))
 
  ;; Firetux
  (sprite (name "firetux-walk-left")
          (x-hotspot 6)
          (y-hotspot 2)
-         (images "shared/firetux-walk-left-0.png"
-                 "shared/firetux-walk-left-1.png"
-                 "shared/firetux-walk-left-2.png"
-                 "shared/firetux-walk-left-3.png"
-                 "shared/firetux-walk-left-4.png"
-                 "shared/firetux-walk-left-5.png"))
-
- (sprite (name "firetux-walk-right")
-         (x-hotspot 6)
-         (y-hotspot 2)
-         (images "shared/firetux-walk-right-0.png"
-                 "shared/firetux-walk-right-1.png"
-                 "shared/firetux-walk-right-2.png"
-                 "shared/firetux-walk-right-3.png"
-                 "shared/firetux-walk-right-4.png"
-                 "shared/firetux-walk-right-5.png"))
-
- (sprite (name "firetux-skid-right")
-         (x-hotspot 8)
-         (y-hotspot 3)
-         (images "shared/firetux-skid-right.png"))
+         (images "shared/tux/fire/walk-0.png"
+                 "shared/tux/fire/walk-1.png"
+                 "shared/tux/fire/walk-2.png"
+                 "shared/tux/fire/walk-3.png"
+                 "shared/tux/fire/walk-4.png"
+                 "shared/tux/fire/walk-5.png")
+         (mirror-as "firetux-walk-right"))
 
  (sprite (name "firetux-skid-left")
          (x-hotspot 8)
          (y-hotspot 3)
-         (images "shared/firetux-skid-left.png"))
+         (images "shared/tux/fire/skid.png")
+         (mirror-as "firetux-skid-right"))
         
  (sprite (name "firetux-stand-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/firetux-stand-left.png"))
-
- (sprite (name "firetux-stand-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/firetux-stand-right.png"))
+         (images "shared/tux/fire/stand.png")
+         (mirror-as "firetux-stand-right"))
 
  (sprite (name "firetux-jump-left")
          (x-hotspot 9)
          (y-hotspot 2)
-         (images "shared/firetux-jump-left-0.png"))
- (sprite (name "firetux-jump-right")
-         (x-hotspot 9)
-         (y-hotspot 2)
-         (images "shared/firetux-jump-right-0.png"))
+         (images "shared/tux/fire/jump.png")
+         (mirror-as "firetux-jump-right"))
 
  (sprite (name "firetux-duck-left")
          (x-hotspot 6)
          (y-hotspot 6)
-         (images "shared/firetux-duck-left.png"))
- (sprite (name "firetux-duck-right")
-         (x-hotspot 6)
-         (y-hotspot 6)
-         (images "shared/firetux-duck-right.png"))
-
+         (images "shared/tux/fire/duck.png")
+         (mirror-as "firetux-duck-right"))
 
  (sprite (name "firetux-kick-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/firetux-kick-left-0.png"))
-
- (sprite (name "firetux-kick-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/firetux-kick-right-0.png"))
+         (images "shared/tux/fire/kick.png")
+         (mirror-as "firetux-kick-right"))
 
  (sprite (name "firetux-grab-left")
          (x-hotspot 5)
          (y-hotspot 1)
-         (images "shared/firetux-grab-left-0.png"))
-
- (sprite (name "firetux-grab-right")
-         (x-hotspot 5)
-         (y-hotspot 1)
-         (images "shared/firetux-grab-right-0.png"))
+         (images "shared/tux/fire/grab.png")
+         (mirror-as "firetux-grab-right"))
 
  ;; Mr. Iceblock
  (sprite (name "mriceblock-left")

@@ -17,9 +17,10 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
-#include "lispreader.h"
 #include "sprite_manager.h"
+#include "sprite.h"
 
 SpriteManager::SpriteManager(const std::string& filename)
 {
@@ -56,29 +57,60 @@ SpriteManager::load_resfile(const std::string& filename)
 
       if (strcmp(lisp_symbol(lisp_car(el)), "sprite") == 0)
         {
-          Sprite* sprite = new Sprite(lisp_cdr(el));
-
-          Sprites::iterator i = sprites.find(sprite->get_name());
-          if (i == sprites.end())
-            {
-              sprites[sprite->get_name()] = sprite;
-            }
-          else
-            {
-              delete i->second;
-              i->second = sprite;
-              std::cout << "Warning: dulpicate entry: '" << sprite->get_name() << "'" << std::endl;
-            }
+          LispReader reader(lisp_cdr(el));
+          Sprite* sprite = new Sprite(reader);
+          add(sprite);
+          if (sprite)
+            try_make_copies(sprite, reader);
         }
       else
-        {
           std::cout << "SpriteManager: Unknown tag" << std::endl;
-        }
 
       cur = lisp_cdr(cur);
     }
 
   lisp_free(root_obj);
+}
+
+void
+SpriteManager::add(Sprite* sprite)
+{
+  Sprites::iterator i = sprites.find(sprite->get_name());
+  if (i == sprites.end())
+  {
+    sprites[sprite->get_name()] = sprite;
+    return;
+  }
+  delete i->second;
+  i->second = sprite;
+  std::cout << "Warning: duplicate entry: '" << sprite->get_name() << "'" << std::endl;
+}
+
+void
+SpriteManager::try_make_copies(Sprite *sprite, LispReader &reader)
+{
+  std::vector<std::string> toCopy;
+  Sprite* newSprite;
+
+  if (reader.read_string_vector("copy-as", &toCopy))
+  {
+    for(std::vector<std::string>::size_type i = 0; i < toCopy.size(); ++i)
+    {
+      newSprite = new Sprite();
+      newSprite->copy(toCopy[i], sprite, SDL_FLIP_NONE);
+      add(newSprite);
+    }
+  }
+  toCopy.clear();
+  if (reader.read_string_vector("mirror-as", &toCopy))
+  {
+    for(std::vector<std::string>::size_type i = 0; i < toCopy.size(); ++i)
+    {
+      newSprite = new Sprite();
+      newSprite->copy(toCopy[i], sprite, SDL_FLIP_HORIZONTAL);
+      add(newSprite);
+    }
+  }
 }
 
 Sprite*

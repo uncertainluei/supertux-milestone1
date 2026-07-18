@@ -49,12 +49,16 @@ class Sprite
 
   void init_defaults();
  public:
-  /** cur has to be a pointer to data in the form of ((x-hotspot 5)
+  Sprite();
+  /** reader has to reading a pointer to data in the form of ((x-hotspot 5)
       (y-hotspot 10) ...) */
-  Sprite(lisp_object_t* cur);
+  Sprite(LispReader& reader);
   ~Sprite();
   
   void reset();
+
+  /** Copy sprite data */
+  void copy(std::string name, Sprite* sprite_to_copy, SDL_RendererFlip flip_params);
 
   /** Update the sprite and process to the next frame */
   void update(float delta);
