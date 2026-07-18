@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL2/SDL_render.h>
+#include <cstddef>
 #include <iostream>
 #include <math.h>
 #include "globals.h"
@@ -67,7 +68,10 @@ Sprite::copy(std::string name, Sprite* sprite_to_copy, SDL_RendererFlip flip_par
   frame_delay = sprite_to_copy->frame_delay;
 
   for(std::vector<Surface*>::size_type i = 0; i < sprite_to_copy->surfaces.size(); ++i)
-    surfaces.push_back(sprite_to_copy->surfaces[i]);
+  {
+      surfaces.push_back(
+          new Surface(sprite_to_copy->surfaces[i]->data.file, USE_ALPHA));
+  }
 
   flip_mode = (SDL_RendererFlip)(sprite_to_copy->flip_mode|flip_params);
 }
