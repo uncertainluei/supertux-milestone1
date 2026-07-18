@@ -177,46 +177,28 @@
          (images "shared/badguys/iceblock/left-0.png"
                  "shared/badguys/iceblock/left-1.png"
                  "shared/badguys/iceblock/left-2.png"
-                 "shared/badguys/iceblock/left-1.png"))
- (sprite (name "mriceblock-right")
-         (x-hotspot 2)
-         (y-hotspot 3)
-         (images "shared/badguys/iceblock/right-0.png"
-                 "shared/badguys/iceblock/right-1.png"
-                 "shared/badguys/iceblock/right-2.png"
-                 "shared/badguys/iceblock/right-1.png"))
+                 "shared/badguys/iceblock/left-1.png")
+         (mirror-as "mriceblock-right"))
  (sprite (name "mriceblock-flat-left")
          (x-hotspot 2)
          (y-hotspot 3)
-         (images "shared/badguys/iceblock/flat-left.png"))
- (sprite (name "mriceblock-flat-right")
-         (x-hotspot 2)
-         (y-hotspot 3)
-         (images "shared/badguys/iceblock/flat-right.png"))
+         (images "shared/badguys/iceblock/flat.png")
+         (mirror-as "mriceblock-flat-right"))
 
 ;; Mrs. Iceblock (smart variant)
  (sprite (name "smartblock-left")
          (x-hotspot 2)
          (y-hotspot 3)
-         (images "shared/badguys/iceblock/smart-left-0.png"
-                 "shared/badguys/iceblock/smart-left-1.png"
-                 "shared/badguys/iceblock/smart-left-2.png"
-                 "shared/badguys/iceblock/smart-left-1.png"))
- (sprite (name "smartblock-right")
-         (x-hotspot 2)
-         (y-hotspot 3)
-         (images "shared/badguys/iceblock/smart-right-0.png"
-                 "shared/badguys/iceblock/smart-right-1.png"
-                 "shared/badguys/iceblock/smart-right-2.png"
-                 "shared/badguys/iceblock/smart-right-1.png"))
+         (images "shared/badguys/iceblock/smart-0.png"
+                 "shared/badguys/iceblock/smart-1.png"
+                 "shared/badguys/iceblock/smart-2.png"
+                 "shared/badguys/iceblock/smart-1.png")
+         (mirror-as "smartblock-right"))
  (sprite (name "smartblock-flat-left")
          (x-hotspot 2)
          (y-hotspot 3)
-         (images "shared/badguys/iceblock/smart-flat-left.png"))
- (sprite (name "smartblock-flat-right")
-         (x-hotspot 2)
-         (y-hotspot 3)
-         (images "shared/badguys/iceblock/smart-flat-right.png"))
+         (images "shared/badguys/iceblock/smart-flat.png")
+         (mirror-as "smartblock-flat-right"))
 
  ;; Mr. Snowball
  (sprite (name "snowball-left")
@@ -225,73 +207,49 @@
          (images "shared/badguys/snowball/left-0.png"
                  "shared/badguys/snowball/left-1.png"
                  "shared/badguys/snowball/left-2.png"
-                 "shared/badguys/snowball/left-1.png"))
- (sprite (name "snowball-right")
-         (x-hotspot 2)
-         (y-hotspot 4)
-         (images "shared/badguys/snowball/right-0.png"
-                 "shared/badguys/snowball/right-1.png"
-                 "shared/badguys/snowball/right-2.png"
-                 "shared/badguys/snowball/right-1.png"))
+                 "shared/badguys/snowball/left-1.png")
+         (mirror-as "snowball-right"))
  (sprite (name "snowball-squished-left")
          (x-hotspot 1)
          (y-hotspot -19)
-         (images "shared/badguys/snowball/squished-left.png"))
- (sprite (name "snowball-squished-right")
-         (x-hotspot 1)
-         (y-hotspot -19)
-         (images "shared/badguys/snowball/squished-right.png"))
+         (images "shared/badguys/snowball/squished.png")
+         (copy-as   "bouncingsnowball-squished-left")
+         (mirror-as "snowball-squished-right"
+                    "bouncingsnowball-squished-right"))
 
 ;; Mrs. Snowball (smart variant)
  (sprite (name "smartball-left")
          (x-hotspot 2)
          (y-hotspot 4)
-         (images "shared/badguys/snowball/smart-left-0.png"
-                 "shared/badguys/snowball/smart-left-1.png"
-                 "shared/badguys/snowball/smart-left-2.png"
-                 "shared/badguys/snowball/smart-left-1.png"))
- (sprite (name "smartball-right")
-         (x-hotspot 2)
-         (y-hotspot 4)
-         (images "shared/badguys/snowball/smart-right-0.png"
-                 "shared/badguys/snowball/smart-right-1.png"
-                 "shared/badguys/snowball/smart-right-2.png"
-                 "shared/badguys/snowball/smart-right-1.png"))
+         (images "shared/badguys/snowball/smart-0.png"
+                 "shared/badguys/snowball/smart-1.png"
+                 "shared/badguys/snowball/smart-2.png"
+                 "shared/badguys/snowball/smart-1.png")
+         (mirror-as "smartball-right"))
  (sprite (name "smartball-squished-left")
          (x-hotspot 1)
          (y-hotspot -19)
-         (images "shared/badguys/snowball/smart-squished-left.png"))
- (sprite (name "smartball-squished-right")
-         (x-hotspot 1)
-         (y-hotspot -19)
-         (images "shared/badguys/snowball/smart-squished-right.png"))
+         (images "shared/badguys/snowball/smart-squished.png")
+         (mirror-as "smartball-squished-right"))
 
  ;; Jumpy
  (sprite (name "jumpy-left-up")
          (x-hotspot 7)
          (y-hotspot 8)
-         (images "shared/badguys/jumpy/left-up.png"))
+         (images "shared/badguys/jumpy/up.png")
+         (mirror-as "jumpy-right-up"))
  (sprite (name "jumpy-left-down")
          (x-hotspot 7)
          (y-hotspot 8)
-         (images "shared/badguys/jumpy/left-down.png"))
+         (images "shared/badguys/jumpy/down.png")
+         (mirror-as "jumpy-right-down"))
  (sprite (name "jumpy-left-middle")
          (x-hotspot 7)
          (y-hotspot 8)
-         (images "shared/badguys/jumpy/left-middle.png"))
- (sprite (name "jumpy-right-up")
-         (x-hotspot 7)
-         (y-hotspot 8)
-         (images "shared/badguys/jumpy/right-up.png"))
- (sprite (name "jumpy-right-down")
-         (x-hotspot 7)
-         (y-hotspot 8)
-         (images "shared/badguys/jumpy/right-down.png"))
- (sprite (name "jumpy-right-middle")
-         (x-hotspot 7)
-         (y-hotspot 8)
-         (images "shared/badguys/jumpy/right-middle.png"))
+         (images "shared/badguys/jumpy/middle.png")
+         (mirror-as "jumpy-right-middle"))
 
+ ;; Mr. Bomb
  (sprite (name "mrbomb-left")
          (fps 10.0)
          (x-hotspot 3)
@@ -300,31 +258,28 @@
                  "shared/badguys/bomb/left-1.png"
                  "shared/badguys/bomb/left-2.png"
                  "shared/badguys/bomb/left-3.png"))
-
  (sprite (name "mrbomb-right")
          (fps 10.0)
          (x-hotspot 7)
          (y-hotspot 12)
-         (images "shared/badguys/bomb/right-0.png"
-                 "shared/badguys/bomb/right-1.png"
-                 "shared/badguys/bomb/right-2.png"
-                 "shared/badguys/bomb/right-3.png"))
- 
-
+         (flip-x #t)
+         (images "shared/badguys/bomb/left-0.png"
+                 "shared/badguys/bomb/left-1.png"
+                 "shared/badguys/bomb/left-2.png"
+                 "shared/badguys/bomb/left-3.png"))
  (sprite (name "mrbomb-ticking-left")
          (fps 15.0)
          (x-hotspot 3)
          (y-hotspot 8)
-         (images "shared/badguys/bomb/ticking-left-0.png"
-                 "shared/badguys/bomb/ticking-left-1.png"))
-
+         (images "shared/badguys/bomb/ticking-0.png"
+                 "shared/badguys/bomb/ticking-1.png"))
  (sprite (name "mrbomb-ticking-right")
          (fps 15.0)
          (x-hotspot 10)
          (y-hotspot 8)
-         (images "shared/badguys/bomb/ticking-right-0.png"
-                 "shared/badguys/bomb/ticking-right-1.png"))
-
+         (flip-x #t)
+         (images "shared/badguys/bomb/ticking-0.png"
+                 "shared/badguys/bomb/ticking-1.png"))
  (sprite (name "mrbomb-explosion")
          (fps 15.0)
          (x-hotspot 32)
@@ -353,7 +308,8 @@
  (sprite (name "fish-down")
          (x-hotspot 2)
          (y-hotspot 11)
-         (images "shared/badguys/fish/down-0.png"))
+         (flip-y #t)
+         (images "shared/badguys/fish/up-0.png"))
 
  (sprite (name "lavaball")
          (fps 15.0)
@@ -367,73 +323,45 @@
          (fps 15.0)
          (x-hotspot 2)
          (y-hotspot 11)
-         (images "shared/badguys/lavaball/down-0.png"
-                 "shared/badguys/lavaball/down-1.png"
-                 "shared/badguys/lavaball/down-2.png"
-                 "shared/badguys/lavaball/down-1.png"))
+         (flip-y #t)
+         (images "shared/badguys/lavaball/up-0.png"
+                 "shared/badguys/lavaball/up-1.png"
+                 "shared/badguys/lavaball/up-2.png"
+                 "shared/badguys/lavaball/up-1.png"))
 
  (sprite (name "bouncingsnowball-left")
          (x-hotspot 1)
          (y-hotspot 0)
-         (images "shared/badguys/snowball/bouncing-left-0.png"
-                 "shared/badguys/snowball/bouncing-left-1.png"
-                 "shared/badguys/snowball/bouncing-left-2.png"
-                 "shared/badguys/snowball/bouncing-left-3.png"
-                 "shared/badguys/snowball/bouncing-left-4.png"
-                 "shared/badguys/snowball/bouncing-left-5.png"))
-
- (sprite (name "bouncingsnowball-right")
-         (x-hotspot 1)
-         (y-hotspot 0)
-         (images "shared/badguys/snowball/bouncing-right-0.png"
-                 "shared/badguys/snowball/bouncing-right-1.png"
-                 "shared/badguys/snowball/bouncing-right-2.png"
-                 "shared/badguys/snowball/bouncing-right-3.png"
-                 "shared/badguys/snowball/bouncing-right-4.png"
-                 "shared/badguys/snowball/bouncing-right-5.png"))
-
- (sprite (name "bouncingsnowball-squished-left")
-         (x-hotspot 1)
-         (y-hotspot -19)
-         (images "shared/badguys/snowball/squished-left.png"))
- (sprite (name "bouncingsnowball-squished-right")
-         (x-hotspot 1)
-         (y-hotspot -19)
-         (images "shared/badguys/snowball/squished-right.png"))
+         (images "shared/badguys/snowball/bouncing-0.png"
+                 "shared/badguys/snowball/bouncing-1.png"
+                 "shared/badguys/snowball/bouncing-2.png"
+                 "shared/badguys/snowball/bouncing-3.png"
+                 "shared/badguys/snowball/bouncing-4.png"
+                 "shared/badguys/snowball/bouncing-5.png")
+         (mirror-as "bouncingsnowball-right"))
 
 
  (sprite (name "flyingsnowball-left")
          (x-hotspot 4)
          (y-hotspot 3)
          (images "shared/badguys/flyingsnowball/left-0.png"
-                 "shared/badguys/flyingsnowball/left-1.png"))
-(sprite (name "flyingsnowball-right")
-         (x-hotspot 4)
-         (y-hotspot 3)
-         (images "shared/badguys/flyingsnowball/right-0.png"
-                 "shared/badguys/flyingsnowball/right-1.png"))
+                 "shared/badguys/flyingsnowball/left-1.png")
+         (mirror-as "flyingsnowball-right"))
 
  (sprite (name "flyingsnowball-squished-left")
          (x-hotspot 1)
          (y-hotspot -19)
-         (images "shared/badguys/flyingsnowball/squished-left.png"))
- (sprite (name "flyingsnowball-squished-right")
-         (x-hotspot 1)
-         (y-hotspot -19)
-         (images "shared/badguys/flyingsnowball/squished-right.png"))
+         (images "shared/badguys/flyingsnowball/squished.png")
+         (mirror-as "flyingsnowball-squished-right"))
+         
 
  (sprite (name "spiky-left")
          (x-hotspot 6)
          (y-hotspot 10)
          (images "shared/badguys/spiky/left-0.png"
                  "shared/badguys/spiky/left-1.png"
-                 "shared/badguys/spiky/left-2.png"))
- (sprite (name "spiky-right")
-         (x-hotspot 6)
-         (y-hotspot 10)
-         (images "shared/badguys/spiky/right-0.png"
-                 "shared/badguys/spiky/right-1.png"
-                 "shared/badguys/spiky/right-2.png"))
+                 "shared/badguys/spiky/left-2.png")
+         (mirror-as "spiky-right"))
 
  (sprite (name "egg")
          (images "shared/powerup/egg.png"))
