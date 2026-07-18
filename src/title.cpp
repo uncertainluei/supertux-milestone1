@@ -251,7 +251,7 @@ void title(void)
   GameSession session(datadir + "/levels/misc/menu.stl", 0, ST_GL_DEMO_GAME);
 
   clearscreen(0, 0, 0);
-  updatescreen();
+  flipscreen();
 
   /* Load images: */
   bkg_title = new Surface(datadir + "/images/title/background.jpg", IGNORE_ALPHA);

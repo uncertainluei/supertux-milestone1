@@ -17,6 +17,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <math.h>
 #include "globals.h"
@@ -34,6 +35,13 @@ Sprite::Sprite(lisp_object_t* cur)
   reader.read_int("x-hotspot", &x_hotspot);
   reader.read_int("y-hotspot", &y_hotspot);
   reader.read_float("fps",     &fps);
+
+  bool flip = false;
+  reader.read_bool("flip-x", &flip);
+  if (flip) flip_mode = (SDL_RendererFlip)(flip_mode|SDL_FLIP_HORIZONTAL);
+  flip = false;
+  reader.read_bool("flip-y", &flip);
+  if (flip) flip_mode = (SDL_RendererFlip)(flip_mode|SDL_FLIP_VERTICAL);
 
   std::vector<std::string> images;
   if(!reader.read_string_vector("images", &images))
@@ -63,6 +71,7 @@ Sprite::init_defaults()
   fps = 10;
   time = 0;
   frame_delay = 1000.0f/fps;
+  flip_mode = SDL_FLIP_NONE;
 }
 
 void
@@ -73,23 +82,23 @@ Sprite::update(float /*delta*/)
 }
 
 void
-Sprite::draw(float x, float y)
+Sprite::draw(float x, float y, SDL_RendererFlip flip_params)
 {
   time = SDL_GetTicks();
   unsigned int frame = get_current_frame();
 
   if (frame < surfaces.size())
-    surfaces[frame]->draw(x - x_hotspot, y - y_hotspot);
+    surfaces[frame]->draw(x - x_hotspot, y - y_hotspot, 255, false, (SDL_RendererFlip)(flip_mode|flip_params));
 }
 
 void
-Sprite::draw_part(float sx, float sy, float x, float y, float w, float h)
+Sprite::draw_part(float sx, float sy, float x, float y, float w, float h, SDL_RendererFlip flip_params)
 {
   time = SDL_GetTicks();
   unsigned int frame = get_current_frame();
 
   if (frame < surfaces.size())
-    surfaces[frame]->draw_part(sx, sy, x - x_hotspot, y - y_hotspot, w, h);
+    surfaces[frame]->draw_part(sx, sy, x - x_hotspot, y - y_hotspot, w, h, 255, false, (SDL_RendererFlip)(flip_mode|flip_params));
 }
 
 void

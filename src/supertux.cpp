@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
     }
   
   clearscreen(0, 0, 0);
-  updatescreen();
+  flipscreen();
 
   unloadshared();
   st_general_free();

@@ -170,7 +170,7 @@ int leveleditor(char* filename)
   /* Clear screen: */
 
   clearscreen(0, 0, 0);
-  updatescreen();
+  flipscreen();
 
 #ifndef NOSOUND
   music_manager->halt_music();

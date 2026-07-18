@@ -814,6 +814,7 @@ void st_video_setup_sdl(int wnd_x, int wnd_y)
   screen = SDL_CreateRGBSurface(0, SCREEN_W, SCREEN_H, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
   sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H);
 
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   SDL_RenderSetLogicalSize(renderer, SCREEN_W, SCREEN_H);
   SDL_RenderSetIntegerScale(renderer, SDL_FALSE);
 }

@@ -22,6 +22,8 @@
 #define SUPERTUX_TEXTURE_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_render.h>
 #include <string>
 #ifndef NOOPENGL
 #include <SDL2/SDL_opengl.h>
@@ -30,7 +32,6 @@
 #include <list>
 #include "screen.h"
 
-SDL_Surface* raw_sdl_surface_from_file(const char* filename);
 SDL_Surface* sdl_surface_from_sdl_surface(SDL_Surface* sdl_surf, int use_alpha);
 
 class SurfaceImpl;
@@ -52,7 +53,6 @@ public:
   int h;
 
   SurfaceData(SDL_Surface* surf, int use_alpha_);
-  SurfaceData(SDL_Surface* surf, int x_, int y_, int w_, int h_, int use_alpha_);
   SurfaceData(const std::string& file_, int use_alpha_);
   SurfaceData(const std::string& file_, int x_, int y_, int w_, int h_, int use_alpha_);
   ~SurfaceData();
@@ -79,8 +79,7 @@ public:
   static void debug_check();
 
   Surface(SDL_Surface* surf, int use_alpha);  
-  Surface(SDL_Surface* surf, int x, int y, int w, int h, int use_alpha);
-  Surface(const std::string& file, int use_alpha);
+  Surface(const std::string& file, int use_alpha);  
   Surface(const std::string& file, int x, int y, int w, int h, int use_alpha);
   ~Surface();
   
@@ -90,10 +89,10 @@ public:
   /** Reload the surface, which is necesarry in case of a mode swich */
   void reload();
 
-  void draw(float x, float y, Uint8 alpha = 255, bool update = false);
+  void draw(float x, float y, Uint8 alpha = 255, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
   void draw_bg(Uint8 alpha = 255, bool update = false);
-  void draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha = 255, bool update = false);
-  void draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update = false);
+  void draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha = 255, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+  void draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
   void resize(int w_, int h_);
 };
 
@@ -113,10 +112,10 @@ public:
   virtual ~SurfaceImpl();
   
   /** Return 0 on success, -2 if surface needs to be reloaded */
-  virtual int draw(float x, float y, Uint8 alpha, bool update) = 0;
+  virtual int draw(float x, float y, Uint8 alpha, bool update, SDL_RendererFlip flip) = 0;
   virtual int draw_bg(Uint8 alpha, bool update) = 0;
-  virtual int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update) = 0;
-  virtual int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update) = 0;
+  virtual int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update, SDL_RendererFlip flip) = 0;
+  virtual int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update, SDL_RendererFlip flip) = 0;
   int resize(int w_, int h_);
 
   SDL_Surface* get_sdl_surface() const; // @evil@ try to avoid this function
@@ -129,11 +128,11 @@ public:
   SurfaceSDL(const std::string& file, int use_alpha);  
   SurfaceSDL(const std::string& file, int x, int y, int w, int h, int use_alpha);
   virtual ~SurfaceSDL();
-
-  int draw(float x, float y, Uint8 alpha, bool update);
+  SDL_Texture* texture;
+  int draw(float x, float y, Uint8 alpha, bool update, SDL_RendererFlip flip);
   int draw_bg(Uint8 alpha, bool update);
-  int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update);
-  int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update);
+  int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update, SDL_RendererFlip flip);
+  int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update, SDL_RendererFlip flip);
 };
 
 #ifndef NOOPENGL
@@ -148,10 +147,10 @@ public:
   SurfaceOpenGL(const std::string& file, int x, int y, int w, int h, int use_alpha);
   virtual ~SurfaceOpenGL();
 
-  int draw(float x, float y, Uint8 alpha, bool update);
+  int draw(float x, float y, Uint8 alpha, bool update, SDL_RendererFlip flip);
   int draw_bg(Uint8 alpha, bool update);
-  int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update);
-  int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update);
+  int draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha, bool update, SDL_RendererFlip flip);
+  int draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update, SDL_RendererFlip flip);
 
 private:
   void create_gl(SDL_Surface * surf, GLuint * tex);

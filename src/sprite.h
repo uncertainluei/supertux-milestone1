@@ -20,6 +20,7 @@
 #ifndef HEADER_SPRITE_HXX
 #define HEADER_SPRITE_HXX
 
+#include <SDL2/SDL_render.h>
 #include <string>
 #include <vector>
 #include "lispreader.h"
@@ -44,6 +45,8 @@ class Sprite
 
   std::vector<Surface*> surfaces;
 
+  SDL_RendererFlip flip_mode;
+
   void init_defaults();
  public:
   /** cur has to be a pointer to data in the form of ((x-hotspot 5)
@@ -55,8 +58,8 @@ class Sprite
 
   /** Update the sprite and process to the next frame */
   void update(float delta);
-  void draw(float x, float y);
-  void draw_part(float sx, float sy, float x, float y, float w, float h);
+  void draw(float x, float y, SDL_RendererFlip flip_params = SDL_FLIP_NONE);
+  void draw_part(float sx, float sy, float x, float y, float w, float h, SDL_RendererFlip flip_params = SDL_FLIP_NONE);
   int get_current_frame() const;
 
   std::string get_name() const { return name; } 
