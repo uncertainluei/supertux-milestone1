@@ -90,7 +90,7 @@ public:
   void reload();
 
   void draw(float x, float y, Uint8 alpha = 255, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
-  void draw_bg(Uint8 alpha = 255, bool update = false);
+  void draw_bg(int x_off = 0, int y_off = 0, Uint8 alpha = 255, bool update = false);
   void draw_part(float sx, float sy, float x, float y, float w, float h,  Uint8 alpha = 255, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
   void draw_stretched(float x, float y, int w, int h, Uint8 alpha, bool update = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
   void resize(int w_, int h_);

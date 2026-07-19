@@ -30,7 +30,6 @@
 #include "texture.h"
 #include "globals.h"
 #include "setup.h"
-#include "text.h"
 
 Surface::Surfaces Surface::surfaces;
 
@@ -224,14 +223,13 @@ Surface::draw(float x, float y, Uint8 alpha, bool update, SDL_RendererFlip flip)
   }
 }
 
+// Draw image background w/ tiling
 void
-Surface::draw_bg(Uint8 alpha, bool update)
+Surface::draw_bg(int x_off, int y_off, Uint8 alpha, bool update)
 {
-  if (impl)
-  {
-    if (impl->draw_bg(alpha, update) == -2)
-      reload();
-  }
+  for (int x = -(x_off % w); x < screen->w; x += w)
+    for (int y = -(y_off % h); y < screen->h; y += h)
+      draw(x, y);
 }
 
 void
